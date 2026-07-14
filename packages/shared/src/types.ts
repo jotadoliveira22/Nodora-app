@@ -83,15 +83,7 @@ export interface BacklinkItem {
 }
 
 export type PropertyType =
-  | 'title'
-  | 'text'
-  | 'number'
-  | 'select'
-  | 'multi_select'
-  | 'status'
-  | 'date'
-  | 'checkbox'
-  | 'url';
+  'title' | 'text' | 'number' | 'select' | 'multi_select' | 'status' | 'date' | 'checkbox' | 'url';
 
 export interface SelectOption {
   id: string;

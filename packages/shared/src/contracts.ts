@@ -21,11 +21,7 @@ export interface AuthenticationProvider {
 }
 
 export type Capability =
-  | 'page.read'
-  | 'page.write'
-  | 'page.delete'
-  | 'database.write'
-  | 'workspace.admin';
+  'page.read' | 'page.write' | 'page.delete' | 'database.write' | 'workspace.admin';
 
 export interface PermissionService {
   can(userId: string, capability: Capability, entityId: string): Promise<boolean>;

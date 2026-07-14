@@ -2,6 +2,7 @@
   "name": "nodora",
   "private": true,
   "version": "0.1.0",
+  "type": "module",
   "description": "Nodora — espacio de trabajo privado y local-first",
   "packageManager": "pnpm@10.33.0",
   "engines": {

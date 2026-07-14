@@ -18,7 +18,6 @@
 export const ORDER_ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 const BASE = ORDER_ALPHABET.length;
 const FIRST = ORDER_ALPHABET[0]!;
-const MID = ORDER_ALPHABET[Math.floor(BASE / 2)]!;
 
 /** Longitud a partir de la cual el llamador debería rebalancear (perezoso). */
 export const REBALANCE_THRESHOLD = 64;
