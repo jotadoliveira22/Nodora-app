@@ -1,0 +1,102 @@
+/* Tokens de diseño de Nodora — docs/DESIGN_SYSTEM.md ("Tinta y papel" / "Grafito") */
+
+:root {
+  --nd-bg: #fafaf7;
+  --nd-surface: #ffffff;
+  --nd-sidebar: #f1f0eb;
+  --nd-text: #1f2328;
+  --nd-text-muted: #6b7280;
+  --nd-border: #e3e2dc;
+  --nd-accent: #2f6f5e;
+  --nd-accent-soft: #e4f0ec;
+  --nd-danger: #b4372f;
+  --nd-danger-soft: #f7e6e4;
+  --nd-warning: #9a6b15;
+  --nd-info: #31597f;
+  --nd-code-bg: #f0efe9;
+
+  --nd-font: ui-sans-serif, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --nd-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  --nd-radius-sm: 4px;
+  --nd-radius-md: 8px;
+  --nd-radius-lg: 12px;
+  --nd-shadow-1: 0 2px 8px rgba(31, 35, 40, 0.08);
+  --nd-shadow-2: 0 8px 28px rgba(31, 35, 40, 0.16);
+
+  --nd-t-fast: 120ms ease-out;
+  --nd-t-med: 200ms ease-out;
+}
+
+[data-theme='dark'] {
+  --nd-bg: #16181d;
+  --nd-surface: #1e2127;
+  --nd-sidebar: #1a1d22;
+  --nd-text: #e8e6e1;
+  --nd-text-muted: #9aa0a6;
+  --nd-border: #2c3037;
+  --nd-accent: #5fa08d;
+  --nd-accent-soft: #24352f;
+  --nd-danger: #d26a63;
+  --nd-danger-soft: #3a2523;
+  --nd-warning: #c99a4b;
+  --nd-info: #7fa6c9;
+  --nd-code-bg: #23262d;
+  --nd-shadow-1: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --nd-shadow-2: 0 8px 28px rgba(0, 0, 0, 0.55);
+}
+
+/* Paleta funcional de etiquetas (select/status) con par claro/oscuro AA. */
+:root {
+  --nd-tag-gray: #e4e4e0;
+  --nd-tag-gray-text: #3f4147;
+  --nd-tag-brown: #eadfd3;
+  --nd-tag-brown-text: #5b4633;
+  --nd-tag-orange: #f6e3d2;
+  --nd-tag-orange-text: #7a4a1f;
+  --nd-tag-amber: #f5ebcf;
+  --nd-tag-amber-text: #6f5716;
+  --nd-tag-green: #ddeee2;
+  --nd-tag-green-text: #2b5e3f;
+  --nd-tag-teal: #d8ecea;
+  --nd-tag-teal-text: #1f5a55;
+  --nd-tag-blue: #dbe8f4;
+  --nd-tag-blue-text: #2a4d70;
+  --nd-tag-indigo: #e2e2f4;
+  --nd-tag-indigo-text: #3c3c78;
+  --nd-tag-purple: #ebdff2;
+  --nd-tag-purple-text: #5a3a6e;
+  --nd-tag-pink: #f5dfe9;
+  --nd-tag-pink-text: #77375a;
+  --nd-tag-red: #f6dcda;
+  --nd-tag-red-text: #7c2f29;
+  --nd-tag-olive: #e7ead2;
+  --nd-tag-olive-text: #55591f;
+}
+
+[data-theme='dark'] {
+  --nd-tag-gray: #34363c;
+  --nd-tag-gray-text: #c8c9cd;
+  --nd-tag-brown: #3d332a;
+  --nd-tag-brown-text: #d6c1a8;
+  --nd-tag-orange: #42311f;
+  --nd-tag-orange-text: #e5b98a;
+  --nd-tag-amber: #3e3620;
+  --nd-tag-amber-text: #dfc887;
+  --nd-tag-green: #24362b;
+  --nd-tag-green-text: #a7d4b6;
+  --nd-tag-teal: #1f3634;
+  --nd-tag-teal-text: #99cfc9;
+  --nd-tag-blue: #24313e;
+  --nd-tag-blue-text: #a4c4e0;
+  --nd-tag-indigo: #2c2c42;
+  --nd-tag-indigo-text: #b8b8e2;
+  --nd-tag-purple: #362a3e;
+  --nd-tag-purple-text: #cfb2e0;
+  --nd-tag-pink: #3c2733;
+  --nd-tag-pink-text: #e0aec7;
+  --nd-tag-red: #3e2624;
+  --nd-tag-red-text: #e3a9a3;
+  --nd-tag-olive: #33361f;
+  --nd-tag-olive-text: #ccd29a;
+}
