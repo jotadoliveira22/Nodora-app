@@ -1,67 +1,57 @@
 # PROJECT_STATE.md — Nodora
 
-> Última actualización: 2026-07-13 (sesión inicial)
+> Última actualización: 2026-07-14
 
 ## Estado actual
 
-**Fase 0 — Investigación** (en curso).
-
-El repositorio acaba de inicializarse. Se está ejecutando la investigación técnica
-y de producto previa a cualquier código de producción.
+**Fases 0–2 documentadas. Punto de control pre-implementación presentado.**
+A continuación: Fase 3, Slice 0 (esqueleto que persiste).
 
 ## Entorno de desarrollo verificado
 
 | Herramienta | Versión | Estado |
 |---|---|---|
 | SO de desarrollo | Linux x86_64 (contenedor remoto) | OK |
-| Node.js | 22.22.2 | OK |
-| pnpm | 10.33.0 | OK |
+| Node.js / pnpm | 22.22.2 / 10.33.0 | OK |
 | Rust / Cargo | 1.94.1 | OK |
-| Python | 3.11.15 | OK (solo scripts) |
-| webkit2gtk-4.1 / gtk3 (deps Tauri Linux) | — | instalación en curso vía apt |
-| sqlite3 CLI | no instalado | no bloqueante (rusqlite empaqueta SQLite) |
+| webkit2gtk-4.1 + gtk3 (deps Tauri Linux) | instaladas vía apt | OK |
 
-**Nota importante:** el objetivo de empaquetado es **Windows (instalador)**, pero el
-entorno de desarrollo es Linux. El instalador de Windows se producirá vía CI
-(GitHub Actions, runner `windows-latest`). En Linux se valida: compilación de
-frontend, tests unitarios/integración, `cargo test`/`cargo check` del backend Tauri
-y, si las dependencias del sistema lo permiten, build de escritorio Linux como
-smoke test.
+El instalador Windows se produce vía CI (`windows-latest`, NSIS): ADR-000.
 
 ## Funciones terminadas
 
-- (ninguna todavía)
+- Documentación completa de Fases 0 (investigación), 1 (producto) y 2
+  (arquitectura, datos, sync, nube, seguridad, diseño): 26 documentos en
+  `docs/` + migraciones SQL iniciales en `migrations/`.
+- Decisiones ADR-000 … ADR-009 registradas en `DECISIONS.md`.
 
 ## Funciones en desarrollo
 
-- Fase 0: documentos de investigación (`docs/RESEARCH.md`, etc.)
+- Slice 0: scaffold monorepo + Tauri 2 + SQLite con migraciones + workspace +
+  página editable con autosave. Criterio: cerrar y reabrir sin perder texto.
 
 ## Bloqueos
 
-- Ninguno bloqueante. Riesgo abierto: compilación Tauri en Linux depende de
-  paquetes del sistema (instalación en curso).
+- Ninguno.
 
 ## Riesgos activos
 
-1. **Empaquetado Windows no ejecutable localmente** — mitigación: CI en Windows;
-   el criterio "instalable en Windows" se valida con artefacto NSIS de CI.
-2. **Alcance muy amplio del MVP** — mitigación: vertical slice estricto, fases
-   pequeñas, TASKS.md como control.
-3. **Acoplamiento al editor (Tiptap/ProseMirror)** — mitigación: capa de
-   abstracción propia sobre el editor (documento en DECISIONS.md).
-4. **Modelo de datos debe sobrevivir a la futura sincronización** — mitigación:
-   UUIDs, tombstones, columnas de versión y device_id desde la primera migración.
+1. Empaquetado Windows solo verificable en CI (ADR-000) — pendiente workflow.
+2. Volumen de alcance del MVP — mitigado por slices de `MVP_SCOPE.md`.
+3. Compilación Rust inicial de Tauri es lenta en contenedor (~minutos) —
+   asumido; se cachea target/.
 
 ## Próximo paso exacto
 
-Completar `docs/RESEARCH.md`, `docs/COMPETITOR_ANALYSIS.md`,
-`docs/TECHNOLOGY_EVALUATION.md`, `docs/LEGAL_AND_LICENSES.md`,
-`docs/RESEARCH_SOURCES.md` y después la Fase 1 (definición de producto).
+Ejecutar tarea 3.1: `pnpm` workspaces + `apps/desktop` (Tauri 2 + React + TS
+estricto + Vite) + `packages/shared` + tooling (ESLint, Prettier, Vitest) y
+primer `cargo test` verde de la capa de migraciones (tarea 3.2).
 
 ## Última prueba ejecutada
 
-- Ninguna (no existe código todavía).
+- Ninguna (aún no hay código). Los docs de Fase 2 definen la matriz de
+  pruebas exigidas.
 
 ## Resultado de compilación
 
-- N/A (no existe código todavía).
+- N/A todavía.
