@@ -118,6 +118,12 @@ export function NodoraEditor({
       extensions,
       content: initialDoc,
       editable,
+      editorProps: {
+        attributes: {
+          // El área de edición es un textbox ARIA: necesita nombre accesible.
+          'aria-label': 'Contenido de la página',
+        },
+      },
       onUpdate: ({ editor }) => {
         onDocChanged(() => editor.getJSON() as EditorDocJson);
       },

@@ -127,3 +127,38 @@ posibilidad de reversión.
   tipográfica del sistema (sin fuentes descargadas: regla offline y arranque
   rápido). Identidad propia definida en `docs/DESIGN_SYSTEM.md`.
 - **Reversión:** fácil.
+
+## ADR-010 — Pruebas de interfaz con Playwright y axe-core sobre un backend en memoria
+
+- **Fecha:** 2026-07-27
+- **Contexto:** La spec §12 exige «pruebas básicas de interfaz» y el PRD N4
+  exige accesibilidad (teclado, contraste AA). La lógica de persistencia ya
+  está cubierta por las pruebas de Rust; faltaba verificar que la UI llama a
+  lo correcto y reacciona bien.
+- **Opciones:** (a) conducir la aplicación Tauri real por WebDriver;
+  (b) servir el frontend con Vite y sustituir la frontera IPC por un backend
+  en memoria; (c) no automatizar la interfaz.
+- **Decisión:** (b), con Playwright + `@axe-core/playwright`.
+- **Razón:** (a) exige `tauri-driver` y un entorno gráfico completo, es lento
+  y frágil en CI; (b) ejercita el mismo código de UI, arranca en segundos y
+  permite provocar fallos del backend a voluntad. El riesgo de que el backend
+  simulado se desvíe del real se acota con la prueba de contrato
+  `ipc_dtos_serialize_in_camel_case`, que fija las formas de los DTO.
+- **Consecuencias:** las pruebas de interfaz NO validan la persistencia real
+  (eso es cosa de `cargo test`). Si se añade un comando IPC, hay que añadirlo
+  también al backend simulado.
+- **Dependencias añadidas (justificación exigida por la spec §15):**
+  - `@playwright/test` (Apache-2.0): estándar de facto para pruebas de
+    navegador; alternativa evaluada: Cypress (peor soporte multipestaña y
+    licencia MIT pero ecosistema más cerrado). Solo desarrollo.
+  - `@axe-core/playwright` y `axe-core` (MPL-2.0): motor de auditoría de
+    accesibilidad más usado; se consume sin modificar sus archivos, lo que
+    respeta la MPL, y es dependencia de desarrollo (no se distribuye en el
+    binario). Alternativa evaluada: revisión manual, descartada por no ser
+    reproducible ni verificable en CI.
+- **Reversión:** fácil (se elimina el directorio `e2e/` y las dependencias).
+- **Hallazgos que justificaron la decisión:** estas pruebas destaparon una
+  pérdida de contenido al titular una página (conflicto de versión espurio),
+  breadcrumbs desactualizados tras renombrar y cuatro violaciones de WCAG AA
+  (contraste del texto secundario y del acento en tema oscuro, editor sin
+  nombre accesible y estructura ARIA inválida del árbol).

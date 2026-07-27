@@ -143,13 +143,16 @@ export function Sidebar() {
     const isOpen = expanded.has(page.id);
     const active = currentPageId === page.id;
     return (
-      <div key={page.id}>
+      <div
+        key={page.id}
+        role="treeitem"
+        aria-selected={active}
+        aria-expanded={page.hasChildren ? isOpen : undefined}
+        aria-label={page.title || 'Sin título'}
+      >
         <div
           className={`nd-tree-item${active ? ' nd-tree-item--active' : ''}`}
           style={{ paddingLeft: 6 + depth * 14 }}
-          role="treeitem"
-          aria-selected={active}
-          aria-expanded={page.hasChildren ? isOpen : undefined}
           onContextMenu={(e) => {
             e.preventDefault();
             setMenu({ x: e.clientX, y: e.clientY, page });
@@ -198,7 +201,9 @@ export function Sidebar() {
             </button>
           </span>
         </div>
-        {isOpen && children.map((c) => renderNode(c, depth + 1))}
+        {isOpen && children.length > 0 && (
+          <div role="group">{children.map((c) => renderNode(c, depth + 1))}</div>
+        )}
       </div>
     );
   };
@@ -216,10 +221,12 @@ export function Sidebar() {
         <span className="nd-kbd">Ctrl K</span>
       </button>
 
-      <div className="nd-side-section" style={{ flex: 1 }} role="tree">
+      <div className="nd-side-section" style={{ flex: 1 }}>
         {favorites.length > 0 && (
           <>
-            <div className="nd-side-label">Favoritos</div>
+            <div className="nd-side-label" id="nd-favoritos">
+              Favoritos
+            </div>
             {favorites.map((p) => (
               <div
                 key={p.id}
@@ -260,7 +267,11 @@ export function Sidebar() {
             </button>
           </span>
         </div>
-        {tree.map((n) => renderNode(n, 0))}
+        {tree.length > 0 && (
+          <div role="tree" aria-label="Árbol de páginas">
+            {tree.map((n) => renderNode(n, 0))}
+          </div>
+        )}
         {!tree.length && (
           <div style={{ padding: 12, color: 'var(--nd-text-muted)', fontSize: 13 }}>
             No hay páginas todavía. Crea la primera con +.

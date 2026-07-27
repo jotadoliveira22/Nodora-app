@@ -148,7 +148,7 @@ export function SearchPalette() {
             solo títulos
           </button>
         </div>
-        <div className="nd-palette-list" role="listbox">
+        <div className="nd-palette-list" role="listbox" aria-label="Resultados de búsqueda">
           {items.map((item, i) => (
             <button
               key={item.id}

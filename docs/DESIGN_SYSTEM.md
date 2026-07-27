@@ -17,7 +17,7 @@ Nombre interno del tema: **"Tinta y papel"** (claro) / **"Grafito"** (oscuro).
 | `--nd-surface` | `#FFFFFF` | tarjetas, popovers |
 | `--nd-sidebar` | `#F1F0EB` | barra lateral |
 | `--nd-text` | `#1F2328` | texto primario |
-| `--nd-text-muted` | `#6B7280` | secundario |
+| `--nd-text-muted` | `#5B6472` | secundario (AA sobre fondo y barra lateral) |
 | `--nd-border` | `#E3E2DC` | bordes/divisores |
 | `--nd-accent` | `#2F6F5E` | acción primaria (verde bosque propio) |
 | `--nd-accent-soft` | `#E4F0EC` | fondos de selección/hover accent |
@@ -27,7 +27,7 @@ Nombre interno del tema: **"Tinta y papel"** (claro) / **"Grafito"** (oscuro).
 
 ### Color — modo oscuro
 `--nd-bg #16181D · surface #1E2127 · sidebar #1A1D22 · text #E8E6E1 ·
-muted #9AA0A6 · border #2C3037 · accent #5FA08D · accent-soft #24352F ·
+muted #9AA0A6 · border #2C3037 · accent #6FB39E · accent-soft #24352F ·
 danger #D26A63 · warning #C99A4B · info #7FA6C9`
 
 Paleta funcional para etiquetas select/status (12 tonos con par claro/oscuro,
