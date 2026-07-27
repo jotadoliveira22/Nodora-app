@@ -72,6 +72,8 @@ Estados: `Pendiente` | `En progreso` | `Bloqueado` | `Terminado` | `Descartado`
 | # | Tarea | Estado |
 |---|---|---|
 | 5.1 | Ejecutar CI y obtener artefacto NSIS de Windows | En progreso |
-| 5.2 | Pruebas de interfaz automatizadas (E2E) | Pendiente |
+| 5.2 | Pruebas de interfaz automatizadas (Playwright) | Terminado |
 | 5.3 | Guía de usuario e instalación (docs/USER_GUIDE.md) | Terminado |
-| 5.4 | Repaso de accesibilidad y pulido de UX | Pendiente |
+| 5.4 | Repaso de accesibilidad (WCAG AA verificado con axe-core) | Terminado |
+| 5.5 | Registrar deuda técnica (docs/TECHNICAL_DEBT.md) | Terminado |
+| 5.6 | Saldar deuda D1 (liberar adjuntos sin referencias) | Pendiente |

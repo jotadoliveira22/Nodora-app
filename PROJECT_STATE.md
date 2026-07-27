@@ -67,6 +67,13 @@ migraciones SQL iniciales. ADR-000 … ADR-009 en `DECISIONS.md`.
 
 - Ninguno.
 
+## Deuda técnica
+
+Registrada en `docs/TECHNICAL_DEBT.md`: adjuntos no liberados (D1), títulos de
+enlaces no refrescados en vivo (D2), mensaje genérico al superar el tamaño
+máximo de documento (D3), instalador sin firmar (D4), sin auto-actualización
+(D5) y backend simulado en las pruebas de interfaz (D6).
+
 ## Riesgos activos
 
 1. **Instalador Windows sin artefacto todavía** — es el único criterio de
