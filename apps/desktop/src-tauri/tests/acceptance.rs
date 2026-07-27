@@ -18,11 +18,11 @@ use tempfile::TempDir;
 const DEVICE: &str = "33333333-3333-4333-8333-333333333333";
 
 const PNG_1PX: &[u8] = &[
-    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44,
-    0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F,
-    0x15, 0xC4, 0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x62, 0x00,
-    0x01, 0x00, 0x00, 0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49,
-    0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
+    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+    0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x62, 0x00, 0x01, 0x00, 0x00,
+    0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+    0x42, 0x60, 0x82,
 ];
 
 fn paragraph(text: &str, block: &str) -> serde_json::Value {
@@ -42,7 +42,9 @@ fn una_consultora_gestiona_un_cliente_de_principio_a_fin() {
     let ws_dir = home.path().join("mi-consultora");
     let ws = workspace::create_workspace(&ws_dir, "Mi Consultora", Some("🗂️"), &registry.device_id)
         .unwrap();
-    registry.remember(&ws.info().unwrap().id, "Mi Consultora", &ws_dir).unwrap();
+    registry
+        .remember(&ws.info().unwrap().id, "Mi Consultora", &ws_dir)
+        .unwrap();
     assert_eq!(ws.info().unwrap().name, "Mi Consultora");
     assert!(ws_dir.join("nodora.db").exists());
     assert!(ws_dir.join("attachments").exists());
@@ -50,11 +52,12 @@ fn una_consultora_gestiona_un_cliente_de_principio_a_fin() {
     let mut ws = ws;
 
     // --- Criterio 3: crear y organizar páginas ---------------------------
-    let cliente = pages::create_page(&ws.conn, &ws.ctx, None, "Cliente Aurora", Some("🏢")).unwrap();
+    let cliente =
+        pages::create_page(&ws.conn, &ws.ctx, None, "Cliente Aurora", Some("🏢")).unwrap();
     let reuniones =
         pages::create_page(&ws.conn, &ws.ctx, Some(&cliente.id), "Reuniones", None).unwrap();
-    let acta = pages::create_page(&ws.conn, &ws.ctx, Some(&reuniones.id), "Acta 12/03", None)
-        .unwrap();
+    let acta =
+        pages::create_page(&ws.conn, &ws.ctx, Some(&reuniones.id), "Acta 12/03", None).unwrap();
     let procesos = pages::create_page(&ws.conn, &ws.ctx, None, "Procesos internos", None).unwrap();
 
     // Se reorganiza: los procesos pasan a colgar del cliente.
@@ -82,9 +85,14 @@ fn una_consultora_gestiona_un_cliente_de_principio_a_fin() {
                           "content": [{"type": "text", "text": "Plazo improrrogable"}]}]}
         ]
     });
-    let guardado =
-        pages::save_page_content(&mut ws.conn, &ws.ctx, &acta.id, &contenido.to_string(), acta.version)
-            .unwrap();
+    let guardado = pages::save_page_content(
+        &mut ws.conn,
+        &ws.ctx,
+        &acta.id,
+        &contenido.to_string(),
+        acta.version,
+    )
+    .unwrap();
 
     // --- Criterio 10: adjuntar una imagen local ---------------------------
     let logo = attachments::import_bytes(&ws, PNG_1PX, "logo-aurora.png").unwrap();
@@ -115,8 +123,14 @@ fn una_consultora_gestiona_un_cliente_de_principio_a_fin() {
             ]}
         ]
     });
-    pages::save_page_content(&mut ws.conn, &ws.ctx, &acta.id, &con_enlace.to_string(), guardado.version)
-        .unwrap();
+    pages::save_page_content(
+        &mut ws.conn,
+        &ws.ctx,
+        &acta.id,
+        &con_enlace.to_string(),
+        guardado.version,
+    )
+    .unwrap();
     let backlinks = pages::backlinks(&ws.conn, &procesos.id).unwrap();
     assert_eq!(backlinks.len(), 1);
     assert_eq!(backlinks[0].title, "Acta 12/03");
@@ -127,9 +141,10 @@ fn una_consultora_gestiona_un_cliente_de_principio_a_fin() {
     let estado = dbview::add_property(&ws.conn, &db.id, "Estado", "select").unwrap();
     let vence = dbview::add_property(&ws.conn, &db.id, "Vencimiento", "date").unwrap();
 
-    for (titulo, eur, dia) in
-        [("F-2026-001", 1500.0, "2026-08-01"), ("F-2026-002", 2300.5, "2026-09-15")]
-    {
+    for (titulo, eur, dia) in [
+        ("F-2026-001", 1500.0, "2026-08-01"),
+        ("F-2026-002", 2300.5, "2026-09-15"),
+    ] {
         let rec = dbview::create_record(&ws.conn, &ws.ctx, &db.id).unwrap();
         pages::rename_page(&ws.conn, &ws.ctx, &rec, titulo).unwrap();
         dbview::set_record_value(
@@ -151,10 +166,16 @@ fn una_consultora_gestiona_un_cliente_de_principio_a_fin() {
     }
     let _ = estado;
 
-    let orden = dbview::RecordSort { property_id: Some(importe.id.clone()), direction: "desc".into() };
+    let orden = dbview::RecordSort {
+        property_id: Some(importe.id.clone()),
+        direction: "desc".into(),
+    };
     let filas = dbview::list_records(&ws.conn, &db.id, Some(&orden), &[]).unwrap();
     assert_eq!(filas.len(), 2);
-    assert_eq!(filas[0].title, "F-2026-002", "el orden descendente por importe manda");
+    assert_eq!(
+        filas[0].title, "F-2026-002",
+        "el orden descendente por importe manda"
+    );
 
     // --- Criterios 5 y 6: cerrar y reabrir sin perder nada ----------------
     let ws_path = ws.path.clone();
@@ -164,7 +185,12 @@ fn una_consultora_gestiona_un_cliente_de_principio_a_fin() {
     let acta_tras_reabrir = pages::get_page(&ws.conn, &acta.id).unwrap();
     assert!(acta_tras_reabrir.content_json.contains(&procesos.id));
     assert_eq!(pages::backlinks(&ws.conn, &procesos.id).unwrap().len(), 1);
-    assert_eq!(dbview::list_records(&ws.conn, &db.id, None, &[]).unwrap().len(), 2);
+    assert_eq!(
+        dbview::list_records(&ws.conn, &db.id, None, &[])
+            .unwrap()
+            .len(),
+        2
+    );
     assert!(attachments::verify(&ws, &logo.id).unwrap());
 
     // --- Criterio 8: buscar contenido -------------------------------------
@@ -177,12 +203,18 @@ fn una_consultora_gestiona_un_cliente_de_principio_a_fin() {
     assert_eq!(hits.len(), 1);
     assert_eq!(hits[0].title, "Cliente Aurora");
     let hits = search::search(&ws.conn, "factura", false, false, 10).unwrap();
-    assert!(!hits.is_empty(), "la base de datos también es buscable por su título");
+    assert!(
+        !hits.is_empty(),
+        "la base de datos también es buscable por su título"
+    );
 
     // --- Criterio 11: exportar información --------------------------------
     let export_dir = home.path().join("exportacion");
     let ficheros = export::export_page_markdown(&ws, &cliente.id, &export_dir, true).unwrap();
-    assert!(ficheros.len() >= 4, "el subárbol completo se exporta: {ficheros:?}");
+    assert!(
+        ficheros.len() >= 4,
+        "el subárbol completo se exporta: {ficheros:?}"
+    );
     let json = home.path().join("exportacion/todo.json");
     export::export_workspace_json(&ws, &json).unwrap();
     let parsed: serde_json::Value =
@@ -209,7 +241,10 @@ fn una_consultora_gestiona_un_cliente_de_principio_a_fin() {
         antes.version,
     );
     let despues = pages::get_page(&ws.conn, &acta.id).unwrap();
-    assert_eq!(antes.content_json, despues.content_json, "los rechazos no alteran el contenido");
+    assert_eq!(
+        antes.content_json, despues.content_json,
+        "los rechazos no alteran el contenido"
+    );
     assert_eq!(antes.version, despues.version);
 
     // Archivar y restaurar devuelve el subárbol intacto.
@@ -236,10 +271,23 @@ fn una_consultora_gestiona_un_cliente_de_principio_a_fin() {
     assert_eq!(copia.info().unwrap().name, "Mi Consultora");
     let acta_copia = pages::get_page(&copia.conn, &acta.id).unwrap();
     assert_eq!(acta_copia.content_json, acta_tras_reabrir.content_json);
-    assert_eq!(pages::backlinks(&copia.conn, &procesos.id).unwrap().len(), 1);
-    assert_eq!(dbview::list_records(&copia.conn, &db.id, None, &[]).unwrap().len(), 2);
+    assert_eq!(
+        pages::backlinks(&copia.conn, &procesos.id).unwrap().len(),
+        1
+    );
+    assert_eq!(
+        dbview::list_records(&copia.conn, &db.id, None, &[])
+            .unwrap()
+            .len(),
+        2
+    );
     assert!(attachments::verify(&copia, &logo.id).unwrap());
-    assert_eq!(search::search(&copia.conn, "Aurora", false, false, 10).unwrap().len(), 1);
+    assert_eq!(
+        search::search(&copia.conn, "Aurora", false, false, 10)
+            .unwrap()
+            .len(),
+        1
+    );
 
     // Y el espacio original sigue intacto tras la restauración.
     assert!(ws_path.join("nodora.db").exists());
@@ -277,11 +325,19 @@ fn el_espacio_es_portatil_entre_carpetas() {
     }
     for entrada in std::fs::read_dir(origen.join("attachments")).unwrap() {
         let entrada = entrada.unwrap();
-        std::fs::copy(entrada.path(), destino.join("attachments").join(entrada.file_name()))
-            .unwrap();
+        std::fs::copy(
+            entrada.path(),
+            destino.join("attachments").join(entrada.file_name()),
+        )
+        .unwrap();
     }
 
     let copia = workspace::open_workspace(&destino, DEVICE).unwrap();
     assert_eq!(pages::get_page(&copia.conn, &p.id).unwrap().title, "Nota");
-    assert_eq!(search::search(&copia.conn, "portátil", false, false, 5).unwrap().len(), 1);
+    assert_eq!(
+        search::search(&copia.conn, "portátil", false, false, 5)
+            .unwrap()
+            .len(),
+        1
+    );
 }

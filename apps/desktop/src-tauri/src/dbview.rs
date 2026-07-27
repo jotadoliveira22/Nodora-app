@@ -15,12 +15,20 @@ use crate::pages::EMPTY_DOC;
 use crate::workspace::{position_at_end, WorkspaceCtx};
 
 pub const PROPERTY_TYPES: &[&str] = &[
-    "title", "text", "number", "select", "multi_select", "status", "date", "checkbox", "url",
+    "title",
+    "text",
+    "number",
+    "select",
+    "multi_select",
+    "status",
+    "date",
+    "checkbox",
+    "url",
 ];
 
 const OPTION_COLORS: &[&str] = &[
-    "gray", "brown", "orange", "amber", "green", "teal", "blue", "indigo", "purple", "pink",
-    "red", "olive",
+    "gray", "brown", "orange", "amber", "green", "teal", "blue", "indigo", "purple", "pink", "red",
+    "olive",
 ];
 
 #[derive(Debug, Clone, Serialize)]
@@ -153,7 +161,12 @@ pub fn get_database(conn: &Connection, db_id: &str) -> Result<DatabaseDetail> {
             })
         })?
         .collect::<std::result::Result<Vec<_>, _>>()?;
-    Ok(DatabaseDetail { id: db_id.to_string(), page_id, title, properties: props })
+    Ok(DatabaseDetail {
+        id: db_id.to_string(),
+        page_id,
+        title,
+        properties: props,
+    })
 }
 
 // ---- Propiedades -------------------------------------------------------------
@@ -165,16 +178,22 @@ pub fn add_property(
     prop_type: &str,
 ) -> Result<DatabaseProperty> {
     if !PROPERTY_TYPES.contains(&prop_type) || prop_type == "title" {
-        return Err(NodoraError::InvalidInput("tipo de propiedad inválido".into()));
+        return Err(NodoraError::InvalidInput(
+            "tipo de propiedad inválido".into(),
+        ));
     }
     if name.trim().is_empty() || name.len() > 200 {
-        return Err(NodoraError::InvalidInput("nombre de propiedad inválido".into()));
+        return Err(NodoraError::InvalidInput(
+            "nombre de propiedad inválido".into(),
+        ));
     }
     // Verifica que la base exista.
     let _: i64 = conn
-        .query_row("SELECT 1 FROM databases WHERE id = ?1 AND deleted_at IS NULL", [db_id], |r| {
-            r.get(0)
-        })
+        .query_row(
+            "SELECT 1 FROM databases WHERE id = ?1 AND deleted_at IS NULL",
+            [db_id],
+            |r| r.get(0),
+        )
         .optional()?
         .ok_or(NodoraError::DatabaseNotFound)?;
     let last: Option<String> = conn
@@ -205,7 +224,9 @@ pub fn add_property(
 
 pub fn rename_property(conn: &Connection, prop_id: &str, name: &str) -> Result<()> {
     if name.trim().is_empty() || name.len() > 200 {
-        return Err(NodoraError::InvalidInput("nombre de propiedad inválido".into()));
+        return Err(NodoraError::InvalidInput(
+            "nombre de propiedad inválido".into(),
+        ));
     }
     let n = conn.execute(
         "UPDATE database_properties SET name = ?1, updated_at = ?2, version = version + 1
@@ -242,11 +263,16 @@ pub fn delete_property(conn: &mut Connection, prop_id: &str) -> Result<()> {
     match ty.as_deref() {
         None => return Err(NodoraError::PropertyNotFound),
         Some("title") => {
-            return Err(NodoraError::InvalidInput("la propiedad título no puede eliminarse".into()))
+            return Err(NodoraError::InvalidInput(
+                "la propiedad título no puede eliminarse".into(),
+            ))
         }
         _ => {}
     }
-    tx.execute("DELETE FROM record_values WHERE property_id = ?1", [prop_id])?;
+    tx.execute(
+        "DELETE FROM record_values WHERE property_id = ?1",
+        [prop_id],
+    )?;
     tx.execute(
         "UPDATE database_properties SET deleted_at = ?1 WHERE id = ?2",
         params![now_iso(), prop_id],
@@ -267,7 +293,10 @@ fn parse_config_options(config_json: &str) -> Vec<(String, String, String)> {
                     Some((
                         o.get("id")?.as_str()?.to_string(),
                         o.get("name")?.as_str()?.to_string(),
-                        o.get("color").and_then(Value::as_str).unwrap_or("gray").to_string(),
+                        o.get("color")
+                            .and_then(Value::as_str)
+                            .unwrap_or("gray")
+                            .to_string(),
                     ))
                 })
                 .collect()
@@ -304,10 +333,16 @@ pub fn change_property_type(
         .optional()?
         .ok_or(NodoraError::PropertyNotFound)?;
     if old_type == "title" {
-        return Err(NodoraError::InvalidInput("la propiedad título no cambia de tipo".into()));
+        return Err(NodoraError::InvalidInput(
+            "la propiedad título no cambia de tipo".into(),
+        ));
     }
     if old_type == new_type {
-        return Ok(ConversionReport { convertible: 0, lossy: 0, applied: false });
+        return Ok(ConversionReport {
+            convertible: 0,
+            lossy: 0,
+            applied: false,
+        });
     }
     let supported: bool = matches!(
         (old_type.as_str(), new_type),
@@ -331,12 +366,15 @@ pub fn change_property_type(
             | ("url", "text")
     );
     if !supported {
-        return Err(NodoraError::UnsafeTypeConversion(format!("{old_type} → {new_type}")));
+        return Err(NodoraError::UnsafeTypeConversion(format!(
+            "{old_type} → {new_type}"
+        )));
     }
 
     let values: Vec<(String, String)> = {
-        let mut stmt = conn
-            .prepare("SELECT record_page_id, value_json FROM record_values WHERE property_id = ?1")?;
+        let mut stmt = conn.prepare(
+            "SELECT record_page_id, value_json FROM record_values WHERE property_id = ?1",
+        )?;
         let rows = stmt.query_map([prop_id], |r| Ok((r.get(0)?, r.get(1)?)))?;
         rows.collect::<std::result::Result<Vec<_>, _>>()?
     };
@@ -349,8 +387,8 @@ pub fn change_property_type(
     let mut lossy = 0i64;
 
     let option_id_for = |name: &str,
-                             new_options: &mut Vec<(String, String, String)>,
-                             option_by_name: &mut HashMap<String, String>|
+                         new_options: &mut Vec<(String, String, String)>,
+                         option_by_name: &mut HashMap<String, String>|
      -> String {
         if let Some(id) = option_by_name.get(name) {
             return id.clone();
@@ -362,19 +400,28 @@ pub fn change_property_type(
         id
     };
 
-    let old_option_name =
-        |id: &str| old_options.iter().find(|(oid, _, _)| oid == id).map(|(_, n, _)| n.clone());
+    let old_option_name = |id: &str| {
+        old_options
+            .iter()
+            .find(|(oid, _, _)| oid == id)
+            .map(|(_, n, _)| n.clone())
+    };
 
     for (record, value_json) in &values {
         let v: Value = serde_json::from_str(value_json).unwrap_or(json!({}));
         let as_text: Option<String> = match old_type.as_str() {
             "text" => v.get("text").and_then(Value::as_str).map(str::to_string),
             "number" => v.get("number").and_then(Value::as_f64).map(|n| {
-                if n.fract() == 0.0 && n.abs() < 1e15 { format!("{}", n as i64) } else { n.to_string() }
+                if n.fract() == 0.0 && n.abs() < 1e15 {
+                    format!("{}", n as i64)
+                } else {
+                    n.to_string()
+                }
             }),
-            "select" | "status" => {
-                v.get(old_type.as_str()).and_then(Value::as_str).and_then(|id| old_option_name(id))
-            }
+            "select" | "status" => v
+                .get(old_type.as_str())
+                .and_then(Value::as_str)
+                .and_then(|id| old_option_name(id)),
             "multi_select" => v.get("multi_select").and_then(Value::as_array).map(|a| {
                 a.iter()
                     .filter_map(Value::as_str)
@@ -388,7 +435,11 @@ pub fn change_property_type(
                 .and_then(Value::as_str)
                 .map(str::to_string),
             "checkbox" => v.get("checkbox").and_then(Value::as_bool).map(|b| {
-                if b { "Sí".to_string() } else { "No".to_string() }
+                if b {
+                    "Sí".to_string()
+                } else {
+                    "No".to_string()
+                }
             }),
             "url" => v.get("url").and_then(Value::as_str).map(str::to_string),
             _ => None,
@@ -408,7 +459,8 @@ pub fn change_property_type(
             },
             "date" => match as_text.as_deref().map(str::trim) {
                 Some(t) if !t.is_empty() => {
-                    if chrono::NaiveDate::parse_from_str(&t[..t.len().min(10)], "%Y-%m-%d").is_ok() {
+                    if chrono::NaiveDate::parse_from_str(&t[..t.len().min(10)], "%Y-%m-%d").is_ok()
+                    {
                         Some(json!({ "date": { "start": &t[..10], "end": null } }).to_string())
                     } else {
                         lossy += 1;
@@ -425,7 +477,12 @@ pub fn change_property_type(
                         .and_then(|a| a.first())
                         .and_then(Value::as_str)
                         .and_then(|id| old_option_name(id));
-                    if v.get("multi_select").and_then(Value::as_array).map(|a| a.len()).unwrap_or(0) > 1 {
+                    if v.get("multi_select")
+                        .and_then(Value::as_array)
+                        .map(|a| a.len())
+                        .unwrap_or(0)
+                        > 1
+                    {
                         lossy += 1;
                     }
                     first.map(|name| {
@@ -461,7 +518,11 @@ pub fn change_property_type(
 
     let convertible = converted.iter().filter(|(_, v)| v.is_some()).count() as i64;
     if dry_run {
-        return Ok(ConversionReport { convertible, lossy, applied: false });
+        return Ok(ConversionReport {
+            convertible,
+            lossy,
+            applied: false,
+        });
     }
 
     let tx = conn.transaction()?;
@@ -499,7 +560,11 @@ pub fn change_property_type(
         }
     }
     tx.commit()?;
-    Ok(ConversionReport { convertible, lossy, applied: true })
+    Ok(ConversionReport {
+        convertible,
+        lossy,
+        applied: true,
+    })
 }
 
 /// Actualiza la configuración (opciones de select/status, formato).
@@ -549,7 +614,17 @@ pub fn create_record(conn: &Connection, ctx: &WorkspaceCtx, db_id: &str) -> Resu
             content_json, content_text, kind, database_id,
             created_at, updated_at, created_by, updated_by, device_id)
          VALUES (?1, ?2, ?3, '', ?4, ?5, '', 'record', ?6, ?7, ?7, ?8, ?8, ?9)",
-        params![id, ctx.workspace_id, page_id_of_db, position, EMPTY_DOC, db_id, now, ctx.user_id, ctx.device_id],
+        params![
+            id,
+            ctx.workspace_id,
+            page_id_of_db,
+            position,
+            EMPTY_DOC,
+            db_id,
+            now,
+            ctx.user_id,
+            ctx.device_id
+        ],
     )?;
     conn.execute(
         "INSERT INTO pages_fts (rowid, title, content_text)
@@ -582,8 +657,11 @@ pub fn list_records(
         })?;
         mapped.collect::<std::result::Result<Vec<_>, _>>()?
     };
-    let mut by_id: HashMap<String, usize> =
-        rows.iter().enumerate().map(|(i, r)| (r.page_id.clone(), i)).collect();
+    let mut by_id: HashMap<String, usize> = rows
+        .iter()
+        .enumerate()
+        .map(|(i, r)| (r.page_id.clone(), i))
+        .collect();
     {
         let mut stmt = conn.prepare(
             "SELECT rv.record_page_id, rv.property_id, rv.value_json
@@ -591,7 +669,11 @@ pub fn list_records(
              WHERE p.database_id = ?1 AND p.deleted_at IS NULL",
         )?;
         let mapped = stmt.query_map([db_id], |r| {
-            Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?))
+            Ok((
+                r.get::<_, String>(0)?,
+                r.get::<_, String>(1)?,
+                r.get::<_, String>(2)?,
+            ))
         })?;
         for item in mapped {
             let (rec, prop, val) = item?;
@@ -603,8 +685,10 @@ pub fn list_records(
 
     // Filtrado en memoria (colecciones acotadas del MVP; docs/DATA_MODEL.md).
     let props = get_database(conn, db_id)?.properties;
-    let prop_type: HashMap<&str, &str> =
-        props.iter().map(|p| (p.id.as_str(), p.prop_type.as_str())).collect();
+    let prop_type: HashMap<&str, &str> = props
+        .iter()
+        .map(|p| (p.id.as_str(), p.prop_type.as_str()))
+        .collect();
     if !filters.is_empty() {
         rows.retain(|row| filters.iter().all(|f| matches_filter(row, f, &prop_type)));
         by_id.clear();
@@ -613,7 +697,10 @@ pub fn list_records(
     if let Some(s) = sort {
         let dir = if s.direction == "desc" { -1 } else { 1 };
         match &s.property_id {
-            None => rows.sort_by(|a, b| (a.title.to_lowercase().cmp(&b.title.to_lowercase())).then(a.position.cmp(&b.position))),
+            None => rows.sort_by(|a, b| {
+                (a.title.to_lowercase().cmp(&b.title.to_lowercase()))
+                    .then(a.position.cmp(&b.position))
+            }),
             Some(pid) => {
                 let ty = prop_type.get(pid.as_str()).copied().unwrap_or("text");
                 rows.sort_by(|a, b| compare_values(a, b, pid, ty));
@@ -627,7 +714,9 @@ pub fn list_records(
 }
 
 fn value_of<'a>(row: &'a RecordRow, prop_id: &str) -> Option<Value> {
-    row.values.get(prop_id).and_then(|s| serde_json::from_str(s).ok())
+    row.values
+        .get(prop_id)
+        .and_then(|s| serde_json::from_str(s).ok())
 }
 
 fn compare_values(a: &RecordRow, b: &RecordRow, prop_id: &str, ty: &str) -> std::cmp::Ordering {
@@ -649,8 +738,16 @@ fn compare_values(a: &RecordRow, b: &RecordRow, prop_id: &str, ty: &str) -> std:
                 ba.cmp(&bb)
             }
             "date" => {
-                let da = va.get("date").and_then(|d| d.get("start")).and_then(Value::as_str).unwrap_or("");
-                let db = vb.get("date").and_then(|d| d.get("start")).and_then(Value::as_str).unwrap_or("");
+                let da = va
+                    .get("date")
+                    .and_then(|d| d.get("start"))
+                    .and_then(Value::as_str)
+                    .unwrap_or("");
+                let db = vb
+                    .get("date")
+                    .and_then(|d| d.get("start"))
+                    .and_then(Value::as_str)
+                    .unwrap_or("");
                 da.cmp(db)
             }
             _ => {
@@ -664,20 +761,36 @@ fn compare_values(a: &RecordRow, b: &RecordRow, prop_id: &str, ty: &str) -> std:
 
 fn flatten_text(v: &Value, ty: &str) -> String {
     match ty {
-        "text" => v.get("text").and_then(Value::as_str).unwrap_or("").to_string(),
-        "url" => v.get("url").and_then(Value::as_str).unwrap_or("").to_string(),
+        "text" => v
+            .get("text")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string(),
+        "url" => v
+            .get("url")
+            .and_then(Value::as_str)
+            .unwrap_or("")
+            .to_string(),
         "select" | "status" => v.get(ty).and_then(Value::as_str).unwrap_or("").to_string(),
         "multi_select" => v
             .get("multi_select")
             .and_then(Value::as_array)
-            .map(|a| a.iter().filter_map(Value::as_str).collect::<Vec<_>>().join(","))
+            .map(|a| {
+                a.iter()
+                    .filter_map(Value::as_str)
+                    .collect::<Vec<_>>()
+                    .join(",")
+            })
             .unwrap_or_default(),
         _ => String::new(),
     }
 }
 
 fn matches_filter(row: &RecordRow, f: &RecordFilter, prop_type: &HashMap<&str, &str>) -> bool {
-    let ty = prop_type.get(f.property_id.as_str()).copied().unwrap_or("text");
+    let ty = prop_type
+        .get(f.property_id.as_str())
+        .copied()
+        .unwrap_or("text");
     // Filtro por título (property especial "title").
     let title_prop = ty == "title";
     let v = value_of(row, &f.property_id);
@@ -693,7 +806,9 @@ fn matches_filter(row: &RecordRow, f: &RecordFilter, prop_type: &HashMap<&str, &
             if title_prop {
                 !row.title.trim().is_empty()
             } else {
-                v.as_ref().map(|v| !flatten_text(v, ty).is_empty()).unwrap_or(false)
+                v.as_ref()
+                    .map(|v| !flatten_text(v, ty).is_empty())
+                    .unwrap_or(false)
                     || matches!(ty, "number" | "checkbox" | "date") && v.is_some()
             }
         }
@@ -729,7 +844,9 @@ fn matches_filter(row: &RecordRow, f: &RecordFilter, prop_type: &HashMap<&str, &
                     } else {
                         match ty {
                             "number" => {
-                                v.as_ref().and_then(|v| v.get("number")).and_then(Value::as_f64)
+                                v.as_ref()
+                                    .and_then(|v| v.get("number"))
+                                    .and_then(Value::as_f64)
                                     == operand.as_f64()
                             }
                             "select" | "status" => {
@@ -740,16 +857,22 @@ fn matches_filter(row: &RecordRow, f: &RecordFilter, prop_type: &HashMap<&str, &
                                 .as_ref()
                                 .and_then(|v| v.get("multi_select"))
                                 .and_then(Value::as_array)
-                                .map(|a| a.iter().filter_map(Value::as_str).any(|s| Some(s) == operand.as_str()))
+                                .map(|a| {
+                                    a.iter()
+                                        .filter_map(Value::as_str)
+                                        .any(|s| Some(s) == operand.as_str())
+                                })
                                 .unwrap_or(false),
-                            "date" => {
-                                v.as_ref()
-                                    .and_then(|v| v.get("date"))
-                                    .and_then(|d| d.get("start"))
-                                    .and_then(Value::as_str)
-                                    .map(|s| Some(&s[..s.len().min(10)]) == operand.as_str().map(|o| &o[..o.len().min(10)]))
-                                    .unwrap_or(false)
-                            }
+                            "date" => v
+                                .as_ref()
+                                .and_then(|v| v.get("date"))
+                                .and_then(|d| d.get("start"))
+                                .and_then(Value::as_str)
+                                .map(|s| {
+                                    Some(&s[..s.len().min(10)])
+                                        == operand.as_str().map(|o| &o[..o.len().min(10)])
+                                })
+                                .unwrap_or(false),
                             _ => {
                                 v.as_ref().map(|v| flatten_text(v, ty)).unwrap_or_default()
                                     == operand.as_str().unwrap_or("")
@@ -760,7 +883,10 @@ fn matches_filter(row: &RecordRow, f: &RecordFilter, prop_type: &HashMap<&str, &
                 "gt" | "lt" => {
                     let cmp = match ty {
                         "number" => {
-                            let a = v.as_ref().and_then(|v| v.get("number")).and_then(Value::as_f64);
+                            let a = v
+                                .as_ref()
+                                .and_then(|v| v.get("number"))
+                                .and_then(Value::as_f64);
                             let b = operand.as_f64();
                             match (a, b) {
                                 (Some(a), Some(b)) => a.partial_cmp(&b),
@@ -823,7 +949,9 @@ pub fn set_record_value(
     }
     if prop_type == "title" {
         // El título vive en pages.title; usa rename_page.
-        return Err(NodoraError::InvalidInput("usa el título de la página".into()));
+        return Err(NodoraError::InvalidInput(
+            "usa el título de la página".into(),
+        ));
     }
     match value_json {
         None => {
@@ -879,6 +1007,8 @@ fn validate_value(prop_type: &str, v: &Value) -> Result<()> {
     if ok {
         Ok(())
     } else {
-        Err(NodoraError::InvalidInput(format!("valor inválido para tipo {prop_type}")))
+        Err(NodoraError::InvalidInput(format!(
+            "valor inválido para tipo {prop_type}"
+        )))
     }
 }

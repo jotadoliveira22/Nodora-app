@@ -30,7 +30,11 @@ fn build_match(query: &str, titles_only: bool) -> Option<String> {
         return None;
     }
     let joined = tokens.join(" ");
-    Some(if titles_only { format!("title: ({joined})") } else { joined })
+    Some(if titles_only {
+        format!("title: ({joined})")
+    } else {
+        joined
+    })
 }
 
 pub fn search(

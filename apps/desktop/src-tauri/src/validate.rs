@@ -46,7 +46,9 @@ pub fn validate_and_project(content_json: &str) -> Result<DocProjection> {
     }
     let doc: Value =
         serde_json::from_str(content_json).map_err(|_| err("JSON de documento no válido"))?;
-    let obj = doc.as_object().ok_or_else(|| err("la raíz no es un objeto"))?;
+    let obj = doc
+        .as_object()
+        .ok_or_else(|| err("la raíz no es un objeto"))?;
     if obj.get("type").and_then(Value::as_str) != Some("doc") {
         return Err(err("la raíz debe ser type=doc"));
     }
@@ -58,7 +60,9 @@ pub fn validate_and_project(content_json: &str) -> Result<DocProjection> {
         attachments: Vec::new(),
     };
     if let Some(content) = obj.get("content") {
-        let blocks = content.as_array().ok_or_else(|| err("doc.content debe ser lista"))?;
+        let blocks = content
+            .as_array()
+            .ok_or_else(|| err("doc.content debe ser lista"))?;
         for block in blocks {
             let block_id = block
                 .get("attrs")
@@ -81,10 +85,17 @@ pub fn validate_and_project(content_json: &str) -> Result<DocProjection> {
 }
 
 fn check_marks(node: &Value) -> Result<()> {
-    let Some(marks) = node.get("marks") else { return Ok(()) };
-    let marks = marks.as_array().ok_or_else(|| err("marks debe ser lista"))?;
+    let Some(marks) = node.get("marks") else {
+        return Ok(());
+    };
+    let marks = marks
+        .as_array()
+        .ok_or_else(|| err("marks debe ser lista"))?;
     for m in marks {
-        let ty = m.get("type").and_then(Value::as_str).ok_or_else(|| err("mark sin type"))?;
+        let ty = m
+            .get("type")
+            .and_then(Value::as_str)
+            .ok_or_else(|| err("mark sin type"))?;
         if !ALLOWED_MARKS.contains(&ty) {
             return Err(err(format!("mark no permitida: {ty}")));
         }
@@ -111,7 +122,10 @@ fn walk_node(node: &Value, w: &mut Walker, depth: usize, block_id: &str) -> Resu
         return Err(err("demasiados nodos en el documento"));
     }
     let obj = node.as_object().ok_or_else(|| err("nodo no es objeto"))?;
-    let ty = obj.get("type").and_then(Value::as_str).ok_or_else(|| err("nodo sin type"))?;
+    let ty = obj
+        .get("type")
+        .and_then(Value::as_str)
+        .ok_or_else(|| err("nodo sin type"))?;
     let attrs = obj.get("attrs");
     let get_attr = |name: &str| attrs.and_then(|a| a.get(name));
 
@@ -170,7 +184,10 @@ fn walk_node(node: &Value, w: &mut Walker, depth: usize, block_id: &str) -> Resu
             walk_children = false;
         }
         "text" => {
-            let t = obj.get("text").and_then(Value::as_str).ok_or_else(|| err("text sin texto"))?;
+            let t = obj
+                .get("text")
+                .and_then(Value::as_str)
+                .ok_or_else(|| err("text sin texto"))?;
             w.text_bytes += t.len();
             if w.text_bytes > MAX_TEXT_BYTES {
                 return Err(err("el texto del documento supera el máximo"));
@@ -184,7 +201,9 @@ fn walk_node(node: &Value, w: &mut Walker, depth: usize, block_id: &str) -> Resu
 
     if walk_children {
         if let Some(content) = obj.get("content") {
-            let children = content.as_array().ok_or_else(|| err("content debe ser lista"))?;
+            let children = content
+                .as_array()
+                .ok_or_else(|| err("content debe ser lista"))?;
             for child in children {
                 // Los hijos heredan el blockId del bloque de nivel superior.
                 walk_node(child, w, depth + 1, block_id)?;

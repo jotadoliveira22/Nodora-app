@@ -67,8 +67,10 @@ impl Registry {
     }
 
     pub fn forget(&self, path: &Path) -> Result<()> {
-        self.conn
-            .execute("DELETE FROM known_workspaces WHERE path = ?1", [path.to_string_lossy()])?;
+        self.conn.execute(
+            "DELETE FROM known_workspaces WHERE path = ?1",
+            [path.to_string_lossy()],
+        )?;
         Ok(())
     }
 
@@ -108,7 +110,11 @@ impl Registry {
 
 fn get_setting(conn: &Connection, key: &str) -> Result<Option<String>> {
     Ok(conn
-        .query_row("SELECT value FROM app_settings WHERE key = ?1", [key], |r| r.get(0))
+        .query_row(
+            "SELECT value FROM app_settings WHERE key = ?1",
+            [key],
+            |r| r.get(0),
+        )
         .optional()?)
 }
 

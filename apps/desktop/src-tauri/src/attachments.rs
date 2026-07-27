@@ -82,7 +82,9 @@ pub fn import_bytes(
     if let Some(info) = existing {
         // El archivo físico debe existir; si falta (workspace copiado a
         // medias), lo re-escribimos.
-        let path = ws.attachments_dir().join(format!("{}.{}", info.id, ext_for_mime(&info.mime)));
+        let path = ws
+            .attachments_dir()
+            .join(format!("{}.{}", info.id, ext_for_mime(&info.mime)));
         if !path.exists() {
             std::fs::write(&path, bytes)?;
         }
@@ -106,8 +108,15 @@ pub fn import_bytes(
             created_at, updated_at, created_by, updated_by, device_id)
          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7, ?8, ?8, ?9)",
         params![
-            id, ws.ctx.workspace_id, safe_name, mime, bytes.len() as i64, hash, now,
-            ws.ctx.user_id, ws.ctx.device_id
+            id,
+            ws.ctx.workspace_id,
+            safe_name,
+            mime,
+            bytes.len() as i64,
+            hash,
+            now,
+            ws.ctx.user_id,
+            ws.ctx.device_id
         ],
     )?;
     Ok(AttachmentInfo {
@@ -162,7 +171,9 @@ pub fn get_info(ws: &OpenWorkspace, id: &str) -> Result<AttachmentInfo> {
 /// muestra el estado de error recuperable (PRD R8.3).
 pub fn resolve_path(ws: &OpenWorkspace, id: &str) -> Result<PathBuf> {
     let info = get_info(ws, id)?;
-    let path = ws.attachments_dir().join(format!("{}.{}", info.id, ext_for_mime(&info.mime)));
+    let path = ws
+        .attachments_dir()
+        .join(format!("{}.{}", info.id, ext_for_mime(&info.mime)));
     if !path.exists() {
         return Err(NodoraError::AttachmentNotFound);
     }
@@ -172,7 +183,9 @@ pub fn resolve_path(ws: &OpenWorkspace, id: &str) -> Result<PathBuf> {
 /// Verifica integridad del archivo contra su hash registrado.
 pub fn verify(ws: &OpenWorkspace, id: &str) -> Result<bool> {
     let info = get_info(ws, id)?;
-    let path = ws.attachments_dir().join(format!("{}.{}", info.id, ext_for_mime(&info.mime)));
+    let path = ws
+        .attachments_dir()
+        .join(format!("{}.{}", info.id, ext_for_mime(&info.mime)));
     if !path.exists() {
         return Ok(false);
     }

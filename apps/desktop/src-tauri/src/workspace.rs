@@ -189,7 +189,13 @@ pub fn rename_workspace(ws: &OpenWorkspace, name: &str) -> Result<()> {
     ws.conn.execute(
         "UPDATE workspaces SET name = ?1, updated_at = ?2, updated_by = ?3, device_id = ?4,
          version = version + 1 WHERE id = ?5",
-        params![name.trim(), now_iso(), ws.ctx.user_id, ws.ctx.device_id, ws.ctx.workspace_id],
+        params![
+            name.trim(),
+            now_iso(),
+            ws.ctx.user_id,
+            ws.ctx.device_id,
+            ws.ctx.workspace_id
+        ],
     )?;
     Ok(())
 }
@@ -203,16 +209,19 @@ pub fn set_workspace_icon(ws: &OpenWorkspace, icon: Option<&str>) -> Result<()> 
     ws.conn.execute(
         "UPDATE workspaces SET icon = ?1, updated_at = ?2, updated_by = ?3, device_id = ?4,
          version = version + 1 WHERE id = ?5",
-        params![icon, now_iso(), ws.ctx.user_id, ws.ctx.device_id, ws.ctx.workspace_id],
+        params![
+            icon,
+            now_iso(),
+            ws.ctx.user_id,
+            ws.ctx.device_id,
+            ws.ctx.workspace_id
+        ],
     )?;
     Ok(())
 }
 
 /// Posición para insertar al final de los hermanos de `parent`.
-pub fn position_at_end(
-    conn: &Connection,
-    parent: Option<&str>,
-) -> Result<String> {
+pub fn position_at_end(conn: &Connection, parent: Option<&str>) -> Result<String> {
     let last: Option<String> = match parent {
         Some(p) => conn
             .query_row(

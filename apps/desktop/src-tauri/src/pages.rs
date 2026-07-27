@@ -268,8 +268,13 @@ pub fn rename_page(
         params![title, now, ctx.user_id, ctx.device_id, id],
     )?;
     fts_insert(conn, id)?;
-    let version: i64 = conn.query_row("SELECT version FROM pages WHERE id = ?1", [id], |r| r.get(0))?;
-    Ok(SaveResult { version, updated_at: now })
+    let version: i64 = conn.query_row("SELECT version FROM pages WHERE id = ?1", [id], |r| {
+        r.get(0)
+    })?;
+    Ok(SaveResult {
+        version,
+        updated_at: now,
+    })
 }
 
 /// Cambia el icono y devuelve la versión nueva (misma razón que `rename_page`).
@@ -291,13 +296,22 @@ pub fn set_page_icon(
          version = version + 1 WHERE id = ?5",
         params![icon, now, ctx.user_id, ctx.device_id, id],
     )?;
-    let version: i64 = conn.query_row("SELECT version FROM pages WHERE id = ?1", [id], |r| r.get(0))?;
-    Ok(SaveResult { version, updated_at: now })
+    let version: i64 = conn.query_row("SELECT version FROM pages WHERE id = ?1", [id], |r| {
+        r.get(0)
+    })?;
+    Ok(SaveResult {
+        version,
+        updated_at: now,
+    })
 }
 
 fn ensure_alive(conn: &Connection, id: &str) -> Result<()> {
     let exists: Option<i64> = conn
-        .query_row("SELECT 1 FROM pages WHERE id = ?1 AND deleted_at IS NULL", [id], |r| r.get(0))
+        .query_row(
+            "SELECT 1 FROM pages WHERE id = ?1 AND deleted_at IS NULL",
+            [id],
+            |r| r.get(0),
+        )
         .optional()?;
     exists.map(|_| ()).ok_or(NodoraError::PageNotFound)
 }
@@ -326,9 +340,11 @@ pub fn save_page_content(
     let projection = validate_and_project(content_json)?;
     let tx = conn.transaction()?;
     let current: Option<i64> = tx
-        .query_row("SELECT version FROM pages WHERE id = ?1 AND deleted_at IS NULL", [id], |r| {
-            r.get(0)
-        })
+        .query_row(
+            "SELECT version FROM pages WHERE id = ?1 AND deleted_at IS NULL",
+            [id],
+            |r| r.get(0),
+        )
         .optional()?;
     let current = current.ok_or(NodoraError::PageNotFound)?;
     if current != base_version {
@@ -339,12 +355,22 @@ pub fn save_page_content(
     tx.execute(
         "UPDATE pages SET content_json = ?1, content_text = ?2, updated_at = ?3,
          updated_by = ?4, device_id = ?5, version = version + 1 WHERE id = ?6",
-        params![content_json, projection.text, now, ctx.user_id, ctx.device_id, id],
+        params![
+            content_json,
+            projection.text,
+            now,
+            ctx.user_id,
+            ctx.device_id,
+            id
+        ],
     )?;
     fts_insert(&tx, id)?;
     reconcile_links(&tx, id, &projection.links)?;
     tx.commit()?;
-    Ok(SaveResult { version: base_version + 1, updated_at: now })
+    Ok(SaveResult {
+        version: base_version + 1,
+        updated_at: now,
+    })
 }
 
 // ---- Mover / duplicar -------------------------------------------------------
@@ -362,7 +388,11 @@ fn is_descendant(conn: &Connection, ancestor: &str, candidate: &str) -> Result<b
             return Err(NodoraError::Internal("árbol demasiado profundo".into()));
         }
         cur = conn
-            .query_row("SELECT parent_page_id FROM pages WHERE id = ?1", [&c], |r| r.get(0))
+            .query_row(
+                "SELECT parent_page_id FROM pages WHERE id = ?1",
+                [&c],
+                |r| r.get(0),
+            )
             .optional()?
             .flatten();
     }
@@ -378,7 +408,9 @@ pub fn move_page(
 ) -> Result<()> {
     let page = get_page(conn, id)?;
     if page.kind == "record" {
-        return Err(NodoraError::InvalidInput("los registros viven en su base de datos".into()));
+        return Err(NodoraError::InvalidInput(
+            "los registros viven en su base de datos".into(),
+        ));
     }
     if let Some(np) = new_parent {
         if np == id || is_descendant(conn, id, np)? {
@@ -395,7 +427,14 @@ pub fn move_page(
     conn.execute(
         "UPDATE pages SET parent_page_id = ?1, position = ?2, updated_at = ?3,
          updated_by = ?4, device_id = ?5, version = version + 1 WHERE id = ?6",
-        params![new_parent, position, now_iso(), ctx.user_id, ctx.device_id, id],
+        params![
+            new_parent,
+            position,
+            now_iso(),
+            ctx.user_id,
+            ctx.device_id,
+            id
+        ],
     )?;
     log_activity(conn, ctx, "page", id, "move")?;
     Ok(())
@@ -429,7 +468,11 @@ fn position_between_siblings(
             }
         }
     };
-    let prev = if idx > 0 { siblings.get(idx - 1).map(|(_, p)| p.as_str()) } else { None };
+    let prev = if idx > 0 {
+        siblings.get(idx - 1).map(|(_, p)| p.as_str())
+    } else {
+        None
+    };
     let next = siblings.get(idx).map(|(_, p)| p.as_str());
     key_between(prev, next)
 }
@@ -497,12 +540,23 @@ fn copy_subtree(
          FROM pages WHERE id = ?1 AND deleted_at IS NULL",
         [old_id],
         |r| {
-            Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?))
+            Ok((
+                r.get(0)?,
+                r.get(1)?,
+                r.get(2)?,
+                r.get(3)?,
+                r.get(4)?,
+                r.get(5)?,
+            ))
         },
     )?;
     let new_page_id = new_id();
     let now = now_iso();
-    let new_title = if is_root { format!("{title} (copia)") } else { title };
+    let new_title = if is_root {
+        format!("{title} (copia)")
+    } else {
+        title
+    };
     let mapped_db = database_id.as_ref().and_then(|d| db_map.get(d).cloned());
     conn.execute(
         "INSERT INTO pages (id, workspace_id, parent_page_id, title, icon, position,
@@ -512,8 +566,16 @@ fn copy_subtree(
                 ?7, ?7, ?8, ?8, ?9
          FROM pages WHERE id = ?10",
         params![
-            new_page_id, new_parent, new_title, icon, position, mapped_db, now, ctx.user_id,
-            ctx.device_id, old_id
+            new_page_id,
+            new_parent,
+            new_title,
+            icon,
+            position,
+            mapped_db,
+            now,
+            ctx.user_id,
+            ctx.device_id,
+            old_id
         ],
     )?;
     let _ = archived_at;
@@ -529,7 +591,11 @@ fn copy_subtree(
     }
     if kind == "database" {
         let old_db: Option<String> = conn
-            .query_row("SELECT id FROM databases WHERE page_id = ?1", [old_id], |r| r.get(0))
+            .query_row(
+                "SELECT id FROM databases WHERE page_id = ?1",
+                [old_id],
+                |r| r.get(0),
+            )
             .optional()?;
         if let Some(old_db) = old_db {
             let new_db_id = new_id();
@@ -545,7 +611,14 @@ fn copy_subtree(
                      WHERE database_id = ?1 AND deleted_at IS NULL",
                 )?;
                 let rows = stmt.query_map([&old_db], |r| {
-                    Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?))
+                    Ok((
+                        r.get(0)?,
+                        r.get(1)?,
+                        r.get(2)?,
+                        r.get(3)?,
+                        r.get(4)?,
+                        r.get(5)?,
+                    ))
                 })?;
                 rows.collect::<std::result::Result<Vec<_>, _>>()?
             };
@@ -587,7 +660,16 @@ fn copy_subtree(
         rows.collect::<std::result::Result<Vec<_>, _>>()?
     };
     for (child_id, child_pos) in children {
-        copy_subtree(conn, ctx, &child_id, Some(&new_page_id), &child_pos, false, db_map, prop_map)?;
+        copy_subtree(
+            conn,
+            ctx,
+            &child_id,
+            Some(&new_page_id),
+            &child_pos,
+            false,
+            db_map,
+            prop_map,
+        )?;
     }
     Ok(new_page_id)
 }
@@ -625,7 +707,11 @@ pub fn restore_page(conn: &mut Connection, ctx: &WorkspaceCtx, id: &str) -> Resu
     }
     // Si el padre sigue archivado o borrado, la raíz restaurada pasa a la raíz del árbol.
     let parent: Option<String> = tx
-        .query_row("SELECT parent_page_id FROM pages WHERE id = ?1", [id], |r| r.get(0))
+        .query_row(
+            "SELECT parent_page_id FROM pages WHERE id = ?1",
+            [id],
+            |r| r.get(0),
+        )
         .optional()?
         .flatten();
     if let Some(p) = parent {
@@ -651,7 +737,11 @@ pub fn restore_page(conn: &mut Connection, ctx: &WorkspaceCtx, id: &str) -> Resu
 
 /// Eliminación definitiva: tombstone de sync + limpieza de contenido,
 /// proyecciones y datos dependientes (docs/DATA_MODEL.md).
-pub fn delete_page_permanently(conn: &mut Connection, ctx: &WorkspaceCtx, id: &str) -> Result<usize> {
+pub fn delete_page_permanently(
+    conn: &mut Connection,
+    ctx: &WorkspaceCtx,
+    id: &str,
+) -> Result<usize> {
     ensure_alive(conn, id)?;
     let tx = conn.transaction()?;
     let ids = subtree_ids(&tx, id)?;
@@ -768,7 +858,11 @@ pub fn list_favorites(conn: &Connection) -> Result<Vec<PageSummary>> {
 
 pub fn is_favorite(conn: &Connection, page_id: &str) -> Result<bool> {
     let row: Option<i64> = conn
-        .query_row("SELECT 1 FROM favorites WHERE page_id = ?1", [page_id], |r| r.get(0))
+        .query_row(
+            "SELECT 1 FROM favorites WHERE page_id = ?1",
+            [page_id],
+            |r| r.get(0),
+        )
         .optional()?;
     Ok(row.is_some())
 }

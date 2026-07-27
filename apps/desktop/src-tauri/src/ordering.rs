@@ -22,7 +22,9 @@ fn validate(key: &str) -> Result<()> {
         digit_value(c)?;
     }
     if key.as_bytes().last() == Some(&ALPHABET[0]) {
-        return Err(NodoraError::InvalidInput("clave de orden termina en 0".into()));
+        return Err(NodoraError::InvalidInput(
+            "clave de orden termina en 0".into(),
+        ));
     }
     Ok(())
 }
@@ -42,7 +44,11 @@ fn mid(a: &str, b: Option<&str>) -> Result<String> {
             return Ok(format!("{}{}", &b[..n], rest));
         }
     }
-    let digit_a = if a.is_empty() { 0 } else { digit_value(a.as_bytes()[0])? };
+    let digit_a = if a.is_empty() {
+        0
+    } else {
+        digit_value(a.as_bytes()[0])?
+    };
     let digit_b = match b {
         Some(b) => digit_value(b.as_bytes()[0])?,
         None => BASE,
@@ -142,7 +148,11 @@ mod tests {
         };
         for _ in 0..2000 {
             let idx = (rnd() * (keys.len() + 1) as f64) as usize;
-            let a = if idx > 0 { Some(keys[idx - 1].clone()) } else { None };
+            let a = if idx > 0 {
+                Some(keys[idx - 1].clone())
+            } else {
+                None
+            };
             let b = keys.get(idx).cloned();
             let k = key_between(a.as_deref(), b.as_deref()).unwrap();
             keys.insert(idx, k);

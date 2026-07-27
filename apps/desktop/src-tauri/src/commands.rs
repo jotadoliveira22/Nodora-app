@@ -8,7 +8,9 @@ use tauri::{AppHandle, Manager, State};
 
 use crate::attachments::{self, AttachmentInfo};
 use crate::backup::{self, BackupSummary};
-use crate::dbview::{self, ConversionReport, DatabaseDetail, DatabaseProperty, RecordFilter, RecordRow, RecordSort};
+use crate::dbview::{
+    self, ConversionReport, DatabaseDetail, DatabaseProperty, RecordFilter, RecordRow, RecordSort,
+};
 use crate::error::{NodoraError, Result};
 use crate::export;
 use crate::pages::{self, BacklinkItem, Crumb, PageDetail, PageSummary, SaveResult};
@@ -49,16 +51,32 @@ pub fn create_workspace(
     let base: String = name
         .trim()
         .chars()
-        .map(|c| if c.is_alphanumeric() { c.to_ascii_lowercase() } else { '-' })
+        .map(|c| {
+            if c.is_alphanumeric() {
+                c.to_ascii_lowercase()
+            } else {
+                '-'
+            }
+        })
         .collect::<String>()
         .trim_matches('-')
         .chars()
         .take(40)
         .collect();
-    let base = if base.is_empty() { "espacio".to_string() } else { base };
+    let base = if base.is_empty() {
+        "espacio".to_string()
+    } else {
+        base
+    };
     let mut dir = parent.join(&base);
     let mut n = 1;
-    while dir.join(workspace::DB_FILE).exists() || (dir.exists() && dir.read_dir().map(|mut d| d.next().is_some()).unwrap_or(false)) {
+    while dir.join(workspace::DB_FILE).exists()
+        || (dir.exists()
+            && dir
+                .read_dir()
+                .map(|mut d| d.next().is_some())
+                .unwrap_or(false))
+    {
         dir = parent.join(format!("{base}-{n}"));
         n += 1;
     }
@@ -67,7 +85,10 @@ pub fn create_workspace(
     let info = ws.info()?;
     state.with_registry(|r| r.remember(&info.id, &info.name, &ws.path))?;
     allow_attachments_scope(&app, &ws);
-    *state.workspace.lock().map_err(|_| NodoraError::Internal("lock".into()))? = Some(ws);
+    *state
+        .workspace
+        .lock()
+        .map_err(|_| NodoraError::Internal("lock".into()))? = Some(ws);
     Ok(info)
 }
 
@@ -83,12 +104,18 @@ pub fn open_workspace(
     let info = ws.info()?;
     state.with_registry(|r| r.remember(&info.id, &info.name, &ws.path))?;
     allow_attachments_scope(&app, &ws);
-    *state.workspace.lock().map_err(|_| NodoraError::Internal("lock".into()))? = Some(ws);
+    *state
+        .workspace
+        .lock()
+        .map_err(|_| NodoraError::Internal("lock".into()))? = Some(ws);
     Ok(info)
 }
 
 #[tauri::command]
-pub fn open_last_workspace(app: AppHandle, state: State<'_, AppState>) -> Result<Option<WorkspaceInfo>> {
+pub fn open_last_workspace(
+    app: AppHandle,
+    state: State<'_, AppState>,
+) -> Result<Option<WorkspaceInfo>> {
     let last = state.with_registry(|r| r.last_opened())?;
     match last {
         None => Ok(None),
@@ -102,7 +129,10 @@ pub fn open_last_workspace(app: AppHandle, state: State<'_, AppState>) -> Result
 
 #[tauri::command]
 pub fn current_workspace(state: State<'_, AppState>) -> Result<Option<WorkspaceInfo>> {
-    let guard = state.workspace.lock().map_err(|_| NodoraError::Internal("lock".into()))?;
+    let guard = state
+        .workspace
+        .lock()
+        .map_err(|_| NodoraError::Internal("lock".into()))?;
     match guard.as_ref() {
         None => Ok(None),
         Some(ws) => Ok(Some(ws.info()?)),
@@ -111,7 +141,10 @@ pub fn current_workspace(state: State<'_, AppState>) -> Result<Option<WorkspaceI
 
 #[tauri::command]
 pub fn close_workspace(state: State<'_, AppState>) -> Result<()> {
-    *state.workspace.lock().map_err(|_| NodoraError::Internal("lock".into()))? = None;
+    *state
+        .workspace
+        .lock()
+        .map_err(|_| NodoraError::Internal("lock".into()))? = None;
     Ok(())
 }
 
@@ -153,7 +186,15 @@ pub fn create_page(
     title: String,
     icon: Option<String>,
 ) -> Result<PageDetail> {
-    state.with_ws(|ws| pages::create_page(&ws.conn, &ws.ctx, parent_page_id.as_deref(), &title, icon.as_deref()))
+    state.with_ws(|ws| {
+        pages::create_page(
+            &ws.conn,
+            &ws.ctx,
+            parent_page_id.as_deref(),
+            &title,
+            icon.as_deref(),
+        )
+    })
 }
 
 #[tauri::command]
@@ -205,7 +246,15 @@ pub fn move_page(
     new_parent_id: Option<String>,
     after_id: Option<String>,
 ) -> Result<()> {
-    state.with_ws(|ws| pages::move_page(&ws.conn, &ws.ctx, &id, new_parent_id.as_deref(), after_id.as_deref()))
+    state.with_ws(|ws| {
+        pages::move_page(
+            &ws.conn,
+            &ws.ctx,
+            &id,
+            new_parent_id.as_deref(),
+            after_id.as_deref(),
+        )
+    })
 }
 
 #[tauri::command]
@@ -281,7 +330,11 @@ pub fn list_recents(state: State<'_, AppState>, limit: Option<i64>) -> Result<Ve
 }
 
 #[tauri::command]
-pub fn linkable_pages(state: State<'_, AppState>, query: String, limit: Option<i64>) -> Result<Vec<PageSummary>> {
+pub fn linkable_pages(
+    state: State<'_, AppState>,
+    query: String,
+    limit: Option<i64>,
+) -> Result<Vec<PageSummary>> {
     state.with_ws(|ws| pages::linkable_pages(&ws.conn, &query, limit.unwrap_or(20)))
 }
 
@@ -336,17 +389,29 @@ pub fn add_property(
 }
 
 #[tauri::command]
-pub fn rename_property(state: State<'_, AppState>, property_id: String, name: String) -> Result<()> {
+pub fn rename_property(
+    state: State<'_, AppState>,
+    property_id: String,
+    name: String,
+) -> Result<()> {
     state.with_ws(|ws| dbview::rename_property(&ws.conn, &property_id, &name))
 }
 
 #[tauri::command]
-pub fn set_property_hidden(state: State<'_, AppState>, property_id: String, hidden: bool) -> Result<()> {
+pub fn set_property_hidden(
+    state: State<'_, AppState>,
+    property_id: String,
+    hidden: bool,
+) -> Result<()> {
     state.with_ws(|ws| dbview::set_property_hidden(&ws.conn, &property_id, hidden))
 }
 
 #[tauri::command]
-pub fn set_property_config(state: State<'_, AppState>, property_id: String, config_json: String) -> Result<()> {
+pub fn set_property_config(
+    state: State<'_, AppState>,
+    property_id: String,
+    config_json: String,
+) -> Result<()> {
     state.with_ws(|ws| dbview::set_property_config(&ws.conn, &property_id, &config_json))
 }
 
@@ -363,7 +428,12 @@ pub fn change_property_type(
     dry_run: Option<bool>,
 ) -> Result<ConversionReport> {
     state.with_ws_mut(|ws| {
-        dbview::change_property_type(&mut ws.conn, &property_id, &new_type, dry_run.unwrap_or(false))
+        dbview::change_property_type(
+            &mut ws.conn,
+            &property_id,
+            &new_type,
+            dry_run.unwrap_or(false),
+        )
     })
 }
 
@@ -380,7 +450,12 @@ pub fn list_records(
     filters: Option<Vec<RecordFilter>>,
 ) -> Result<Vec<RecordRow>> {
     state.with_ws(|ws| {
-        dbview::list_records(&ws.conn, &database_id, sort.as_ref(), &filters.unwrap_or_default())
+        dbview::list_records(
+            &ws.conn,
+            &database_id,
+            sort.as_ref(),
+            &filters.unwrap_or_default(),
+        )
     })
 }
 
@@ -392,14 +467,23 @@ pub fn set_record_value(
     value_json: Option<String>,
 ) -> Result<()> {
     state.with_ws(|ws| {
-        dbview::set_record_value(&ws.conn, &ws.ctx, &record_page_id, &property_id, value_json.as_deref())
+        dbview::set_record_value(
+            &ws.conn,
+            &ws.ctx,
+            &record_page_id,
+            &property_id,
+            value_json.as_deref(),
+        )
     })
 }
 
 // ---- Adjuntos --------------------------------------------------------------------
 
 #[tauri::command]
-pub fn import_attachment_from_path(state: State<'_, AppState>, path: String) -> Result<AttachmentInfo> {
+pub fn import_attachment_from_path(
+    state: State<'_, AppState>,
+    path: String,
+) -> Result<AttachmentInfo> {
     state.with_ws(|ws| attachments::import_from_path(ws, &path))
 }
 
@@ -417,7 +501,11 @@ pub fn import_attachment_base64(
 
 #[tauri::command]
 pub fn resolve_attachment(state: State<'_, AppState>, id: String) -> Result<String> {
-    state.with_ws(|ws| Ok(attachments::resolve_path(ws, &id)?.to_string_lossy().into_owned()))
+    state.with_ws(|ws| {
+        Ok(attachments::resolve_path(ws, &id)?
+            .to_string_lossy()
+            .into_owned())
+    })
 }
 
 #[tauri::command]
@@ -451,7 +539,9 @@ pub fn create_backup(state: State<'_, AppState>, dest_dir: Option<String>) -> Re
             Some(d) => export::ensure_safe_dir(d)?,
             None => ws.path.join(workspace::BACKUPS_DIR),
         };
-        Ok(backup::create_backup(ws, &dir)?.to_string_lossy().into_owned())
+        Ok(backup::create_backup(ws, &dir)?
+            .to_string_lossy()
+            .into_owned())
     })
 }
 
@@ -472,8 +562,10 @@ pub fn restore_backup(
         None => crate::registry::Registry::default_workspaces_dir(&state.data_dir),
     };
     state.with_registry(|r| {
-        Ok(backup::restore_backup(r, &PathBuf::from(&zip_path), &parent)?
-            .to_string_lossy()
-            .into_owned())
+        Ok(
+            backup::restore_backup(r, &PathBuf::from(&zip_path), &parent)?
+                .to_string_lossy()
+                .into_owned(),
+        )
     })
 }

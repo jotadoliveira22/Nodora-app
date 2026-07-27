@@ -38,14 +38,17 @@ fn migrates_database_created_before_migrations_existed() {
     let db_path = tmp.path().join("legacy.db");
     {
         let conn = rusqlite::Connection::open(&db_path).unwrap();
-        conn.execute_batch("CREATE TABLE legado (id TEXT PRIMARY KEY, dato TEXT);").unwrap();
-        conn.execute("INSERT INTO legado VALUES ('1','conservado')", []).unwrap();
+        conn.execute_batch("CREATE TABLE legado (id TEXT PRIMARY KEY, dato TEXT);")
+            .unwrap();
+        conn.execute("INSERT INTO legado VALUES ('1','conservado')", [])
+            .unwrap();
     }
     let conn = db::open_with_migrations(&db_path, db::WORKSPACE_MIGRATIONS).unwrap();
     assert_eq!(db::schema_version(&conn).unwrap(), 1);
     // Los datos preexistentes siguen ahí (la migración es aditiva).
-    let dato: String =
-        conn.query_row("SELECT dato FROM legado WHERE id='1'", [], |r| r.get(0)).unwrap();
+    let dato: String = conn
+        .query_row("SELECT dato FROM legado WHERE id='1'", [], |r| r.get(0))
+        .unwrap();
     assert_eq!(dato, "conservado");
     // Y las tablas nuevas existen.
     let n: i64 = conn
@@ -73,11 +76,19 @@ fn migration_failure_rolls_back_and_leaves_db_usable() {
     assert!(matches!(res, Err(NodoraError::MigrationFailed(_))));
     // Rollback: la tabla parcial no quedó, y la base sigue abriéndose.
     let n: i64 = conn
-        .query_row("SELECT COUNT(*) FROM sqlite_master WHERE name='ok'", [], |r| r.get(0))
+        .query_row(
+            "SELECT COUNT(*) FROM sqlite_master WHERE name='ok'",
+            [],
+            |r| r.get(0),
+        )
         .unwrap();
     assert_eq!(n, 0, "la migración fallida debe revertirse por completo");
     let version: i64 = conn
-        .query_row("SELECT COALESCE(MAX(version),0) FROM schema_migrations", [], |r| r.get(0))
+        .query_row(
+            "SELECT COALESCE(MAX(version),0) FROM schema_migrations",
+            [],
+            |r| r.get(0),
+        )
         .unwrap();
     assert_eq!(version, 0);
 }
@@ -107,7 +118,10 @@ fn sql_injection_attempts_are_inert() {
         "(((",
     ] {
         let res = search::search(&w.conn, probe, false, false, 10);
-        assert!(res.is_ok(), "la consulta {probe:?} no debe romper la búsqueda");
+        assert!(
+            res.is_ok(),
+            "la consulta {probe:?} no debe romper la búsqueda"
+        );
     }
 
     // En el buscador de páginas enlazables (LIKE con escape).
@@ -116,7 +130,10 @@ fn sql_injection_attempts_are_inert() {
     }
 
     // La tabla sigue existiendo y la página también.
-    let n: i64 = w.conn.query_row("SELECT COUNT(*) FROM pages", [], |r| r.get(0)).unwrap();
+    let n: i64 = w
+        .conn
+        .query_row("SELECT COUNT(*) FROM pages", [], |r| r.get(0))
+        .unwrap();
     assert!(n >= 2);
 }
 
@@ -132,14 +149,21 @@ fn relative_and_traversal_paths_are_rejected() {
         "./x",
     ] {
         assert!(
-            matches!(export::ensure_safe_dir(evil), Err(NodoraError::PathNotAllowed)),
+            matches!(
+                export::ensure_safe_dir(evil),
+                Err(NodoraError::PathNotAllowed)
+            ),
             "la ruta {evil:?} debía rechazarse"
         );
     }
     // Una ruta absoluta sí se admite (el diálogo nativo las produce). Lo que
     // cuenta como absoluta depende de la plataforma: en Windows "/tmp/x" no
     // lo es, porque carece de unidad.
-    let absolute = if cfg!(windows) { "C:\\Users\\nodora\\destino" } else { "/tmp/destino" };
+    let absolute = if cfg!(windows) {
+        "C:\\Users\\nodora\\destino"
+    } else {
+        "/tmp/destino"
+    };
     assert!(
         export::ensure_safe_dir(absolute).is_ok(),
         "una ruta absoluta de la plataforma debe admitirse: {absolute}"
@@ -148,7 +172,10 @@ fn relative_and_traversal_paths_are_rejected() {
     if cfg!(windows) {
         for evil in ["/tmp/destino", "C:destino"] {
             assert!(
-                matches!(export::ensure_safe_dir(evil), Err(NodoraError::PathNotAllowed)),
+                matches!(
+                    export::ensure_safe_dir(evil),
+                    Err(NodoraError::PathNotAllowed)
+                ),
                 "la ruta {evil:?} debía rechazarse en Windows"
             );
         }
@@ -172,7 +199,10 @@ fn backup_with_traversal_entries_is_rejected() {
         z.finish().unwrap();
     }
     let res = backup::validate_backup(&evil_zip);
-    assert!(matches!(res, Err(NodoraError::BackupInvalid(_))), "zip-slip debe rechazarse");
+    assert!(
+        matches!(res, Err(NodoraError::BackupInvalid(_))),
+        "zip-slip debe rechazarse"
+    );
     assert!(!tmp.path().join("fuera.txt").exists());
 }
 
@@ -219,17 +249,32 @@ fn invalid_record_values_are_rejected() {
     let fecha = dbview::add_property(&w.conn, &d.id, "Fecha", "date").unwrap();
     let rec = dbview::create_record(&w.conn, &w.ctx, &d.id).unwrap();
 
-    for bad in [r#"{"date":{"start":"ayer"}}"#, r#"{"text":"x"}"#, "{}", "no json"] {
+    for bad in [
+        r#"{"date":{"start":"ayer"}}"#,
+        r#"{"text":"x"}"#,
+        "{}",
+        "no json",
+    ] {
         assert!(
             dbview::set_record_value(&w.conn, &w.ctx, &rec, &fecha.id, Some(bad)).is_err(),
             "valor {bad:?} debía rechazarse"
         );
     }
     // Uno válido sí entra.
-    dbview::set_record_value(&w.conn, &w.ctx, &rec, &fecha.id, Some(r#"{"date":{"start":"2026-07-14"}}"#))
-        .unwrap();
+    dbview::set_record_value(
+        &w.conn,
+        &w.ctx,
+        &rec,
+        &fecha.id,
+        Some(r#"{"date":{"start":"2026-07-14"}}"#),
+    )
+    .unwrap();
     let rows = dbview::list_records(&w.conn, &d.id, None, &[]).unwrap();
-    assert!(rows[0].values.get(&fecha.id).unwrap().contains("2026-07-14"));
+    assert!(rows[0]
+        .values
+        .get(&fecha.id)
+        .unwrap()
+        .contains("2026-07-14"));
 }
 
 // ---- Operaciones repetidas / idempotencia (spec §12) ------------------------
@@ -253,7 +298,10 @@ fn repeated_operations_are_safe() {
     pages::archive_page(&mut w.conn, &w.ctx, &p.id).unwrap();
     pages::restore_page(&mut w.conn, &w.ctx, &p.id).unwrap();
     pages::restore_page(&mut w.conn, &w.ctx, &p.id).unwrap();
-    assert!(pages::get_page(&w.conn, &p.id).unwrap().archived_at.is_none());
+    assert!(pages::get_page(&w.conn, &p.id)
+        .unwrap()
+        .archived_at
+        .is_none());
 
     // Visitar repetidamente: una sola fila en recientes.
     for _ in 0..5 {
@@ -278,10 +326,20 @@ fn ipc_dtos_serialize_in_camel_case() {
     let p = pages::create_page(&w.conn, &w.ctx, None, "Contrato", None).unwrap();
 
     let detail = serde_json::to_value(&p).unwrap();
-    for key in ["id", "parentPageId", "contentJson", "archivedAt", "databaseId", "updatedAt"] {
+    for key in [
+        "id",
+        "parentPageId",
+        "contentJson",
+        "archivedAt",
+        "databaseId",
+        "updatedAt",
+    ] {
         assert!(detail.get(key).is_some(), "PageDetail debe exponer {key}");
     }
-    assert!(detail.get("parent_page_id").is_none(), "no debe filtrarse snake_case");
+    assert!(
+        detail.get("parent_page_id").is_none(),
+        "no debe filtrarse snake_case"
+    );
 
     let summaries = serde_json::to_value(pages::list_pages(&w.conn).unwrap()).unwrap();
     let first = &summaries[0];
@@ -294,7 +352,10 @@ fn ipc_dtos_serialize_in_camel_case() {
     assert!(dbjson.get("pageId").is_some());
     let prop = &dbjson["properties"][0];
     assert!(prop.get("configJson").is_some());
-    assert_eq!(prop["type"], "title", "el campo se serializa como `type`, no `propType`");
+    assert_eq!(
+        prop["type"], "title",
+        "el campo se serializa como `type`, no `propType`"
+    );
 
     // El error de la frontera IPC lleva code + message estables.
     let err = serde_json::to_value(NodoraError::VersionConflict).unwrap();
@@ -302,10 +363,8 @@ fn ipc_dtos_serialize_in_camel_case() {
     assert!(err["message"].as_str().unwrap().len() > 0);
 
     // Los errores de infraestructura no filtran detalles internos.
-    let storage = serde_json::to_value(NodoraError::Storage(
-        rusqlite::Error::QueryReturnedNoRows,
-    ))
-    .unwrap();
+    let storage =
+        serde_json::to_value(NodoraError::Storage(rusqlite::Error::QueryReturnedNoRows)).unwrap();
     assert_eq!(storage["code"], "STORAGE_ERROR");
     assert_eq!(storage["message"], "Error de almacenamiento local");
 }
@@ -354,9 +413,16 @@ fn multilingual_content_survives_save_search_export_and_backup() {
     let detail = pages::get_page(&w2.conn, &p.id).unwrap();
     assert_eq!(detail.title, titulo);
     assert_eq!(detail.icon.as_deref(), Some("🌍"));
-    assert!(detail.content_json.contains(cuerpo), "el cuerpo multilingüe debe restaurarse íntegro");
+    assert!(
+        detail.content_json.contains(cuerpo),
+        "el cuerpo multilingüe debe restaurarse íntegro"
+    );
     let hits = search::search(&w2.conn, "中文", false, false, 10).unwrap();
-    assert_eq!(hits.len(), 1, "el índice FTS se restaura junto con los datos");
+    assert_eq!(
+        hits.len(),
+        1,
+        "el índice FTS se restaura junto con los datos"
+    );
 }
 
 // ---- Adjuntos: límites y tipos (THREAT_MODEL T6) ----------------------------
@@ -416,10 +482,19 @@ fn tree_invariants_hold_under_stress() {
 
     // Archivar la raíz archiva los 30; restaurar los devuelve.
     pages::archive_page(&mut w.conn, &w.ctx, &chain[0]).unwrap();
-    assert!(pages::list_pages(&w.conn).unwrap().iter().all(|p| !chain.contains(&p.id)));
+    assert!(pages::list_pages(&w.conn)
+        .unwrap()
+        .iter()
+        .all(|p| !chain.contains(&p.id)));
     pages::restore_page(&mut w.conn, &w.ctx, &chain[0]).unwrap();
     let visibles = pages::list_pages(&w.conn).unwrap();
-    assert_eq!(chain.iter().filter(|id| visibles.iter().any(|p| &p.id == *id)).count(), 30);
+    assert_eq!(
+        chain
+            .iter()
+            .filter(|id| visibles.iter().any(|p| &p.id == *id))
+            .count(),
+        30
+    );
 
     // Eliminar la raíz elimina el subárbol completo.
     let n = pages::delete_page_permanently(&mut w.conn, &w.ctx, &chain[0]).unwrap();

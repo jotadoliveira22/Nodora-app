@@ -1,7 +1,10 @@
 //! Tests de integración del núcleo (sin runtime de Tauri).
 //! Cubren la matriz crítica de docs/NODORA_SPEC.md §12.
 
-use nodora_desktop_lib::{attachments, backup, db, dbview, error::NodoraError, export, pages, registry::Registry, search, workspace};
+use nodora_desktop_lib::{
+    attachments, backup, db, dbview, error::NodoraError, export, pages, registry::Registry, search,
+    workspace,
+};
 use std::path::Path;
 use tempfile::TempDir;
 
@@ -51,8 +54,11 @@ fn migrations_are_idempotent_and_checksummed() {
     drop(c2);
     // Checksum manipulado -> se niega a abrir.
     let c = rusqlite::Connection::open(&db_path).unwrap();
-    c.execute("UPDATE schema_migrations SET checksum = 'malo' WHERE version = 1", [])
-        .unwrap();
+    c.execute(
+        "UPDATE schema_migrations SET checksum = 'malo' WHERE version = 1",
+        [],
+    )
+    .unwrap();
     drop(c);
     let res = db::open_with_migrations(&db_path, db::WORKSPACE_MIGRATIONS);
     assert!(matches!(res, Err(NodoraError::MigrationFailed(_))));
@@ -113,7 +119,10 @@ fn page_crud_and_tree() {
     // Eliminación definitiva: tombstone + sin resultados de búsqueda.
     let n = pages::delete_page_permanently(&mut w.conn, &w.ctx, &a.id).unwrap();
     assert_eq!(n, 2); // A y B
-    assert!(matches!(pages::get_page(&w.conn, &a.id), Err(NodoraError::PageNotFound)));
+    assert!(matches!(
+        pages::get_page(&w.conn, &a.id),
+        Err(NodoraError::PageNotFound)
+    ));
     let hits = search::search(&w.conn, "B", false, false, 10).unwrap();
     assert!(hits.is_empty() || hits.iter().all(|h| h.page_id != b.id));
 }
@@ -124,12 +133,14 @@ fn save_content_persists_and_locks_versions() {
     let mut w = ws(tmp.path());
     let p = pages::create_page(&w.conn, &w.ctx, None, "Notas", None).unwrap();
 
-    let r1 = pages::save_page_content(&mut w.conn, &w.ctx, &p.id, &doc("hola uno"), p.version).unwrap();
+    let r1 =
+        pages::save_page_content(&mut w.conn, &w.ctx, &p.id, &doc("hola uno"), p.version).unwrap();
     // Guardado repetido con versión vieja -> conflicto (no corrompe).
     let res = pages::save_page_content(&mut w.conn, &w.ctx, &p.id, &doc("pisado"), p.version);
     assert!(matches!(res, Err(NodoraError::VersionConflict)));
     // Dos guardados consecutivos correctos.
-    let r2 = pages::save_page_content(&mut w.conn, &w.ctx, &p.id, &doc("hola dos"), r1.version).unwrap();
+    let r2 =
+        pages::save_page_content(&mut w.conn, &w.ctx, &p.id, &doc("hola dos"), r1.version).unwrap();
     assert_eq!(r2.version, r1.version + 1);
 
     // Reabrir el workspace conserva el último contenido.
@@ -153,16 +164,27 @@ fn renaming_returns_the_new_version_so_autosave_does_not_conflict() {
     let after_rename = pages::rename_page(&w.conn, &w.ctx, &p.id, "Cliente Aurora").unwrap();
     assert_eq!(after_rename.version, p.version + 1);
     // Con la versión devuelta, el guardado pasa.
-    let saved =
-        pages::save_page_content(&mut w.conn, &w.ctx, &p.id, &doc("notas"), after_rename.version)
-            .unwrap();
+    let saved = pages::save_page_content(
+        &mut w.conn,
+        &w.ctx,
+        &p.id,
+        &doc("notas"),
+        after_rename.version,
+    )
+    .unwrap();
     assert_eq!(saved.version, after_rename.version + 1);
 
     // El icono se comporta igual.
     let after_icon = pages::set_page_icon(&w.conn, &w.ctx, &p.id, Some("📌")).unwrap();
     assert_eq!(after_icon.version, saved.version + 1);
-    pages::save_page_content(&mut w.conn, &w.ctx, &p.id, &doc("más notas"), after_icon.version)
-        .unwrap();
+    pages::save_page_content(
+        &mut w.conn,
+        &w.ctx,
+        &p.id,
+        &doc("más notas"),
+        after_icon.version,
+    )
+    .unwrap();
 
     // Y usar la versión anterior sigue siendo un conflicto legítimo.
     assert!(matches!(
@@ -183,8 +205,11 @@ fn uncommitted_transaction_is_invisible_after_reopen() {
     let p = pages::create_page(&w.conn, &w.ctx, None, "Crash", None).unwrap();
     {
         let tx = w.conn.transaction().unwrap();
-        tx.execute("UPDATE pages SET title = 'no debería verse' WHERE id = ?1", [&p.id])
-            .unwrap();
+        tx.execute(
+            "UPDATE pages SET title = 'no debería verse' WHERE id = ?1",
+            [&p.id],
+        )
+        .unwrap();
         // drop sin commit = rollback (equivalente a proceso muerto).
     }
     let path = w.path.clone();
@@ -282,8 +307,15 @@ fn search_excludes_archived_unless_asked() {
     let mut w = ws(tmp.path());
     let p = pages::create_page(&w.conn, &w.ctx, None, "Congelada", None).unwrap();
     pages::archive_page(&mut w.conn, &w.ctx, &p.id).unwrap();
-    assert!(search::search(&w.conn, "congelada", false, false, 10).unwrap().is_empty());
-    assert_eq!(search::search(&w.conn, "congelada", true, false, 10).unwrap().len(), 1);
+    assert!(search::search(&w.conn, "congelada", false, false, 10)
+        .unwrap()
+        .is_empty());
+    assert_eq!(
+        search::search(&w.conn, "congelada", true, false, 10)
+            .unwrap()
+            .len(),
+        1
+    );
 }
 
 // ---- Bases de datos ----------------------------------------------------------------
@@ -312,7 +344,10 @@ fn database_records_and_sorting() {
     let _ = estado;
 
     // Orden por número asc.
-    let sort = dbview::RecordSort { property_id: Some(horas.id.clone()), direction: "asc".into() };
+    let sort = dbview::RecordSort {
+        property_id: Some(horas.id.clone()),
+        direction: "asc".into(),
+    };
     let rows = dbview::list_records(&w.conn, &d.id, Some(&sort), &[]).unwrap();
     assert_eq!(rows[0].title, "Zeta");
 
@@ -364,11 +399,11 @@ fn property_type_conversion_text_to_select() {
 // ---- Adjuntos -------------------------------------------------------------------
 
 const PNG_1PX: &[u8] = &[
-    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44,
-    0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F,
-    0x15, 0xC4, 0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x62, 0x00,
-    0x01, 0x00, 0x00, 0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49,
-    0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
+    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+    0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x62, 0x00, 0x01, 0x00, 0x00,
+    0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+    0x42, 0x60, 0x82,
 ];
 
 #[test]
@@ -487,7 +522,8 @@ fn corrupt_backup_is_rejected_without_touching_data() {
     let f = std::fs::File::create(&not_backup).unwrap();
     let mut zw = zip::ZipWriter::new(f);
     use std::io::Write;
-    zw.start_file("hola.txt", zip::write::SimpleFileOptions::default()).unwrap();
+    zw.start_file("hola.txt", zip::write::SimpleFileOptions::default())
+        .unwrap();
     zw.write_all(b"hola").unwrap();
     zw.finish().unwrap();
     assert!(backup::validate_backup(&not_backup).is_err());
@@ -513,7 +549,10 @@ fn thousands_of_pages_stay_responsive() {
     assert_eq!(hits.len(), 30);
     let searched = t2.elapsed();
     // Cotas laxas para CI; el objetivo es detectar regresiones brutales.
-    assert!(created.as_secs() < 60, "crear 2000 páginas tardó {created:?}");
+    assert!(
+        created.as_secs() < 60,
+        "crear 2000 páginas tardó {created:?}"
+    );
     assert!(listed.as_millis() < 2000, "listar tardó {listed:?}");
     assert!(searched.as_millis() < 1000, "buscar tardó {searched:?}");
 }

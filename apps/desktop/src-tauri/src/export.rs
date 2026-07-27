@@ -18,7 +18,13 @@ pub const EXPORT_FORMAT_VERSION: i64 = 1;
 fn slugify(title: &str, fallback: &str) -> String {
     let mut s: String = title
         .chars()
-        .map(|c| if c.is_alphanumeric() || c == ' ' || c == '-' || c == '_' { c } else { ' ' })
+        .map(|c| {
+            if c.is_alphanumeric() || c == ' ' || c == '-' || c == '_' {
+                c
+            } else {
+                ' '
+            }
+        })
         .collect::<String>()
         .split_whitespace()
         .collect::<Vec<_>>()
@@ -43,7 +49,11 @@ fn render_inline(node: &Value, ctx: &mut MdCtx) -> String {
     let ty = node.get("type").and_then(Value::as_str).unwrap_or("");
     match ty {
         "text" => {
-            let mut t = node.get("text").and_then(Value::as_str).unwrap_or("").to_string();
+            let mut t = node
+                .get("text")
+                .and_then(Value::as_str)
+                .unwrap_or("")
+                .to_string();
             if let Some(marks) = node.get("marks").and_then(Value::as_array) {
                 let mut href: Option<String> = None;
                 for m in marks {
@@ -95,7 +105,12 @@ fn render_inline(node: &Value, ctx: &mut MdCtx) -> String {
 fn children_inline(node: &Value, ctx: &mut MdCtx) -> String {
     node.get("content")
         .and_then(Value::as_array)
-        .map(|a| a.iter().map(|c| render_inline(c, ctx)).collect::<Vec<_>>().join(""))
+        .map(|a| {
+            a.iter()
+                .map(|c| render_inline(c, ctx))
+                .collect::<Vec<_>>()
+                .join("")
+        })
         .unwrap_or_default()
 }
 
@@ -125,7 +140,11 @@ fn render_block(node: &Value, ctx: &mut MdCtx, indent: usize) -> String {
                         .and_then(Value::as_bool)
                         .unwrap_or(false);
                     let marker = if tasks {
-                        if checked { "- [x]".into() } else { "- [ ]".into() }
+                        if checked {
+                            "- [x]".into()
+                        } else {
+                            "- [ ]".into()
+                        }
                     } else if ordered {
                         format!("{}.", i + 1)
                     } else {
@@ -159,7 +178,12 @@ fn render_block(node: &Value, ctx: &mut MdCtx, indent: usize) -> String {
             let inner = node
                 .get("content")
                 .and_then(Value::as_array)
-                .map(|a| a.iter().map(|c| render_block(c, ctx, 0)).collect::<Vec<_>>().join(""))
+                .map(|a| {
+                    a.iter()
+                        .map(|c| render_block(c, ctx, 0))
+                        .collect::<Vec<_>>()
+                        .join("")
+                })
                 .unwrap_or_default();
             inner
                 .trim_end()
@@ -178,7 +202,12 @@ fn render_block(node: &Value, ctx: &mut MdCtx, indent: usize) -> String {
             let inner = node
                 .get("content")
                 .and_then(Value::as_array)
-                .map(|a| a.iter().map(|c| render_block(c, ctx, 0)).collect::<Vec<_>>().join(""))
+                .map(|a| {
+                    a.iter()
+                        .map(|c| render_block(c, ctx, 0))
+                        .collect::<Vec<_>>()
+                        .join("")
+                })
                 .unwrap_or_default();
             let mut lines = inner.trim_end().lines();
             let first = lines.next().unwrap_or("");
@@ -195,7 +224,10 @@ fn render_block(node: &Value, ctx: &mut MdCtx, indent: usize) -> String {
                 .and_then(|a| a.get("language"))
                 .and_then(Value::as_str)
                 .unwrap_or("");
-            format!("{pad}```{lang}\n{}\n{pad}```\n\n", children_inline(node, ctx))
+            format!(
+                "{pad}```{lang}\n{}\n{pad}```\n\n",
+                children_inline(node, ctx)
+            )
         }
         "horizontalRule" => format!("{pad}---\n\n"),
         "image" => {
@@ -246,11 +278,20 @@ fn render_block(node: &Value, ctx: &mut MdCtx, indent: usize) -> String {
     }
 }
 
-pub fn page_to_markdown(ws: &OpenWorkspace, page_id: &str, file_names: &HashMap<String, String>) -> Result<(String, Vec<String>)> {
+pub fn page_to_markdown(
+    ws: &OpenWorkspace,
+    page_id: &str,
+    file_names: &HashMap<String, String>,
+) -> Result<(String, Vec<String>)> {
     let page = crate::pages::get_page(&ws.conn, page_id)?;
     let doc: Value = serde_json::from_str(&page.content_json)
         .map_err(|_| NodoraError::InvalidDocument("contenido corrupto".into()))?;
-    let mut ctx = MdCtx { conn: &ws.conn, ws, file_names: file_names.clone(), assets: Vec::new() };
+    let mut ctx = MdCtx {
+        conn: &ws.conn,
+        ws,
+        file_names: file_names.clone(),
+        assets: Vec::new(),
+    };
     let mut out = format!("# {}\n\n", page.title);
     if let Some(blocks) = doc.get("content").and_then(Value::as_array) {
         for b in blocks {
@@ -292,7 +333,11 @@ pub fn export_page_markdown(
             .unwrap_or_default();
         let base = slugify(&title, id);
         let count = used.entry(base.clone()).or_insert(0);
-        let name = if *count == 0 { format!("{base}.md") } else { format!("{base}-{count}.md") };
+        let name = if *count == 0 {
+            format!("{base}.md")
+        } else {
+            format!("{base}-{count}.md")
+        };
         *count += 1;
         file_names.insert(id.clone(), name);
     }

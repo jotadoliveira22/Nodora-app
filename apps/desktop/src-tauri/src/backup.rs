@@ -113,7 +113,8 @@ pub fn create_backup(ws: &OpenWorkspace, dest_dir: &Path) -> Result<PathBuf> {
 
         let file = std::fs::File::create(&zip_path)?;
         let mut zipw = zip::ZipWriter::new(file);
-        let opts = SimpleFileOptions::default().compression_method(zip::CompressionMethod::Deflated);
+        let opts =
+            SimpleFileOptions::default().compression_method(zip::CompressionMethod::Deflated);
         zipw.start_file("manifest.json", opts)
             .map_err(|e| NodoraError::Internal(format!("zip: {e}")))?;
         zipw.write_all(
@@ -129,7 +130,8 @@ pub fn create_backup(ws: &OpenWorkspace, dest_dir: &Path) -> Result<PathBuf> {
                 .map_err(|e| NodoraError::Internal(format!("zip: {e}")))?;
             zipw.write_all(bytes)?;
         }
-        zipw.finish().map_err(|e| NodoraError::Internal(format!("zip: {e}")))?;
+        zipw.finish()
+            .map_err(|e| NodoraError::Internal(format!("zip: {e}")))?;
         Ok(zip_path.clone())
     })();
 
@@ -140,10 +142,20 @@ pub fn create_backup(ws: &OpenWorkspace, dest_dir: &Path) -> Result<PathBuf> {
 fn sanitize_component(name: &str) -> String {
     let s: String = name
         .chars()
-        .map(|c| if c.is_alphanumeric() || c == '-' || c == '_' { c } else { '-' })
+        .map(|c| {
+            if c.is_alphanumeric() || c == '-' || c == '_' {
+                c
+            } else {
+                '-'
+            }
+        })
         .collect();
     let trimmed = s.trim_matches('-');
-    if trimmed.is_empty() { "workspace".into() } else { trimmed.chars().take(40).collect() }
+    if trimmed.is_empty() {
+        "workspace".into()
+    } else {
+        trimmed.chars().take(40).collect()
+    }
 }
 
 fn read_zip_entry(archive: &mut zip::ZipArchive<std::fs::File>, name: &str) -> Result<Vec<u8>> {
@@ -193,7 +205,11 @@ pub fn validate_backup(zip_path: &Path) -> Result<BackupSummary> {
             "el respaldo fue creado por una versión más nueva de Nodora".into(),
         ));
     }
-    let max_schema = db::WORKSPACE_MIGRATIONS.iter().map(|m| m.version).max().unwrap_or(0);
+    let max_schema = db::WORKSPACE_MIGRATIONS
+        .iter()
+        .map(|m| m.version)
+        .max()
+        .unwrap_or(0);
     if manifest.schema_version > max_schema {
         return Err(NodoraError::BackupInvalid(
             "el respaldo requiere una versión más nueva de Nodora".into(),
@@ -204,7 +220,10 @@ pub fn validate_backup(zip_path: &Path) -> Result<BackupSummary> {
     for f in &manifest.files {
         let bytes = read_zip_entry(&mut archive, &f.name)?;
         if bytes.len() as u64 != f.size || sha256_hex(&bytes) != f.sha256 {
-            return Err(NodoraError::BackupInvalid(format!("hash no coincide: {}", f.name)));
+            return Err(NodoraError::BackupInvalid(format!(
+                "hash no coincide: {}",
+                f.name
+            )));
         }
     }
 
@@ -222,7 +241,9 @@ pub fn validate_backup(zip_path: &Path) -> Result<BackupSummary> {
             |r| r.get(0),
         )?;
         if n != 2 {
-            return Err(NodoraError::BackupInvalid("no es una base de Nodora".into()));
+            return Err(NodoraError::BackupInvalid(
+                "no es una base de Nodora".into(),
+            ));
         }
         Ok(())
     })();
@@ -241,11 +262,7 @@ pub fn validate_backup(zip_path: &Path) -> Result<BackupSummary> {
 
 /// Restaura un respaldo como workspace NUEVO bajo `dest_parent` y lo
 /// registra. Devuelve la ruta del workspace restaurado.
-pub fn restore_backup(
-    registry: &Registry,
-    zip_path: &Path,
-    dest_parent: &Path,
-) -> Result<PathBuf> {
+pub fn restore_backup(registry: &Registry, zip_path: &Path, dest_parent: &Path) -> Result<PathBuf> {
     let summary = validate_backup(zip_path)?;
 
     let base = format!("{}-restaurado", sanitize_component(&summary.workspace_name));

@@ -58,8 +58,11 @@ pub fn migrate(conn: &mut Connection, migrations: &[Migration]) -> Result<()> {
            checksum TEXT NOT NULL
          );",
     )?;
-    let current: i64 =
-        conn.query_row("SELECT COALESCE(MAX(version),0) FROM schema_migrations", [], |r| r.get(0))?;
+    let current: i64 = conn.query_row(
+        "SELECT COALESCE(MAX(version),0) FROM schema_migrations",
+        [],
+        |r| r.get(0),
+    )?;
     let max_known = migrations.iter().map(|m| m.version).max().unwrap_or(0);
     if current > max_known {
         return Err(NodoraError::SchemaTooNew);
@@ -94,8 +97,7 @@ pub fn migrate(conn: &mut Connection, migrations: &[Migration]) -> Result<()> {
         }
     }
     // Aplica las pendientes, cada una en su propia transacción.
-    let mut pending: Vec<&Migration> =
-        migrations.iter().filter(|m| m.version > current).collect();
+    let mut pending: Vec<&Migration> = migrations.iter().filter(|m| m.version > current).collect();
     pending.sort_by_key(|m| m.version);
     for m in pending {
         let tx = conn.transaction()?;
@@ -112,7 +114,11 @@ pub fn migrate(conn: &mut Connection, migrations: &[Migration]) -> Result<()> {
 }
 
 pub fn schema_version(conn: &Connection) -> Result<i64> {
-    Ok(conn.query_row("SELECT COALESCE(MAX(version),0) FROM schema_migrations", [], |r| r.get(0))?)
+    Ok(conn.query_row(
+        "SELECT COALESCE(MAX(version),0) FROM schema_migrations",
+        [],
+        |r| r.get(0),
+    )?)
 }
 
 /// Comprobación rápida de integridad al abrir (docs/THREAT_MODEL.md T10).
