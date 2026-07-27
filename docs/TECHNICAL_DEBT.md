@@ -76,3 +76,20 @@
   en `cargo test`. Ver ADR-010.
 - **Cómo se salda:** generar los tipos de la frontera IPC desde Rust (por
   ejemplo con `ts-rs`) para que el desajuste rompa la compilación.
+
+## D7 — Creación de páginas y registros sin transacción explícita
+
+- **Qué pasa:** `pages::create_page_with_content` y `dbview::create_record`
+  hacen el `INSERT` de la página, la inserción en el índice FTS, la
+  reconciliación de enlaces y el registro de actividad en autocommit, no
+  dentro de una única transacción. El guardado de contenido
+  (`save_page_content`), que es la operación crítica, sí es transaccional.
+- **Impacto:** si el proceso muriera exactamente entre el `INSERT` y la
+  inserción en FTS, la página existiría pero no aparecería en las búsquedas
+  hasta volver a guardarla. No hay pérdida ni corrupción de contenido.
+- **Por qué se aceptó:** la ventana es de microsegundos sobre la misma
+  conexión y el mismo archivo; envolverlo exige cambiar las firmas a
+  `&mut Connection` y propagar el cambio por toda la capa de comandos.
+- **Cómo se salda:** mover estas operaciones a transacción como
+  `save_page_content`, o añadir una comprobación de consistencia
+  («reindexar búsqueda») en el arranque. V2.

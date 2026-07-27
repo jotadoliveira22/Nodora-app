@@ -46,7 +46,7 @@ migraciones SQL iniciales. ADR-000 … ADR-009 en `DECISIONS.md`.
 - Recolección segura de adjuntos sin referencias («Liberar espacio»), que
   recalcula las referencias reales desde el contenido y nunca borra archivos
   que no reconoce.
-- 46 comandos IPC tipados; errores con códigos estables sin filtrar detalles
+- 54 comandos IPC tipados; errores con códigos estables sin filtrar detalles
   internos; logging estructurado sin contenido de usuario.
 
 **Frontend (React + TypeScript estricto):**

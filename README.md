@@ -18,6 +18,7 @@ servidor, sin internet.
 - Backlinks automáticos entre páginas.
 - Bases de datos internas con vista de tabla y 9 tipos de propiedad.
 - Exportación a Markdown y JSON; respaldos verificados y restauración segura.
+- Liberación segura de adjuntos que ya no usa ninguna página.
 - Modo claro/oscuro; interfaz en español optimizada para teclado.
 
 ## Desarrollo
@@ -29,7 +30,8 @@ Tauri (`libwebkit2gtk-4.1-dev libgtk-3-dev`).
 pnpm install
 pnpm dev                 # app de escritorio en modo desarrollo
 pnpm -r test             # tests TS (shared, editor, desktop)
-cd apps/desktop/src-tauri && cargo test   # tests del backend (31)
+cd apps/desktop/src-tauri && cargo test   # backend (53)
+pnpm --filter @nodora/desktop test:ui     # interfaz y accesibilidad (24)
 pnpm lint && pnpm -r typecheck
 pnpm --filter @nodora/desktop tauri build # empaquetado
 ```

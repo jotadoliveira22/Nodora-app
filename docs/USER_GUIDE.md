@@ -101,6 +101,17 @@ Tus datos son tuyos y siempre puedes llevártelos.
 | Crear respaldo | Menú del espacio → Crear respaldo | Un `.zip` con la base de datos, los adjuntos y un manifiesto con huellas de verificación |
 | Restaurar | Menú del espacio → Restaurar respaldo | Nodora **verifica** el respaldo completo antes de tocar nada |
 
+### Liberar espacio
+
+Con el tiempo pueden quedar imágenes que ya no usa ninguna página (porque
+borraste el bloque o la página entera). En el menú del espacio →
+**Liberar espacio**, Nodora calcula cuáles son y te dice cuántas y cuántos MB
+recuperarías **antes** de borrar nada. Las imágenes que sigan insertadas en
+alguna página no se tocan, y los archivos que Nodora no reconozca (por
+ejemplo, si copiaste la carpeta a medias) se informan pero nunca se eliminan
+solos. Como la operación no se puede deshacer, conviene crear un respaldo
+antes.
+
 **La restauración nunca sobrescribe tu espacio actual**: crea siempre un
 espacio nuevo junto al existente. Si el archivo está dañado o alterado,
 Nodora lo rechaza y te lo dice, sin modificar ningún dato.
@@ -155,6 +166,9 @@ guardado automático. Nunca queda a medias.
 - Editor: sin tablas, columnas ni bloques desplegables (previstos para la
   siguiente versión).
 - Sin importadores desde otras herramientas.
+- Al renombrar una página, los enlaces que apuntan a ella y que estén en la
+  página abierta siguen mostrando el nombre anterior hasta que navegues fuera
+  y vuelvas (el enlace funciona igual).
 
 ## Si algo va mal
 
