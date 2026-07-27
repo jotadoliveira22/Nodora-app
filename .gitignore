@@ -8,3 +8,5 @@ coverage/
 .vite/
 *.tsbuildinfo
 /apps/desktop/src-tauri/gen/
+test-results/
+playwright-report/

@@ -172,12 +172,16 @@ pub fn list_archived_pages(state: State<'_, AppState>) -> Result<Vec<PageSummary
 }
 
 #[tauri::command]
-pub fn rename_page(state: State<'_, AppState>, id: String, title: String) -> Result<()> {
+pub fn rename_page(state: State<'_, AppState>, id: String, title: String) -> Result<SaveResult> {
     state.with_ws(|ws| pages::rename_page(&ws.conn, &ws.ctx, &id, &title))
 }
 
 #[tauri::command]
-pub fn set_page_icon(state: State<'_, AppState>, id: String, icon: Option<String>) -> Result<()> {
+pub fn set_page_icon(
+    state: State<'_, AppState>,
+    id: String,
+    icon: Option<String>,
+) -> Result<SaveResult> {
     state.with_ws(|ws| pages::set_page_icon(&ws.conn, &ws.ctx, &id, icon.as_deref()))
 }
 

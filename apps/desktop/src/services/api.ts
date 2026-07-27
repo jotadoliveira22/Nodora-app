@@ -55,8 +55,12 @@ export const pagesApi = {
   get: (id: string) => call<PageDetail>('get_page', { id }),
   list: () => call<PageSummary[]>('list_pages'),
   listArchived: () => call<PageSummary[]>('list_archived_pages'),
-  rename: (id: string, title: string) => call<void>('rename_page', { id, title }),
-  setIcon: (id: string, icon: string | null) => call<void>('set_page_icon', { id, icon }),
+  // Devuelven la versión nueva de la página: cualquier escritura sobre la
+  // entidad incrementa `version`, y el autosave debe adoptarla como base.
+  rename: (id: string, title: string) =>
+    call<{ version: number; updatedAt: string }>('rename_page', { id, title }),
+  setIcon: (id: string, icon: string | null) =>
+    call<{ version: number; updatedAt: string }>('set_page_icon', { id, icon }),
   saveContent: (id: string, contentJson: string, baseVersion: number) =>
     call<{ version: number; updatedAt: string }>('save_page_content', {
       id,

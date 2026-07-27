@@ -154,8 +154,14 @@ export function PageView({ pageId }: { pageId: string }) {
   const saveTitle = useCallback(async () => {
     if (!page || titleDraft === page.title) return;
     try {
-      await pagesApi.rename(page.id, titleDraft);
-      setPage({ ...page, title: titleDraft });
+      const res = await pagesApi.rename(page.id, titleDraft);
+      // Renombrar incrementa la versión de la página: adoptarla evita que el
+      // siguiente autosave choque con un conflicto espurio y pierda lo escrito.
+      baseVersion.current = res.version;
+      setPage({ ...page, title: titleDraft, version: res.version });
+      // Los breadcrumbs muestran el título: hay que reflejar el cambio aquí
+      // también, o seguirían mostrando el nombre anterior hasta recargar.
+      setCrumbs((cs) => cs.map((c) => (c.id === page.id ? { ...c, title: titleDraft } : c)));
       await refreshTree();
     } catch (e) {
       notifyError(e, 'No se pudo renombrar');
@@ -240,8 +246,11 @@ export function PageView({ pageId }: { pageId: string }) {
         if (icon === null || !page) return;
         void pagesApi
           .setIcon(page.id, icon.trim() || null)
-          .then(async () => {
-            setPage({ ...page, icon: icon.trim() || null });
+          .then(async (res) => {
+            const next = icon.trim() || null;
+            baseVersion.current = res.version;
+            setPage({ ...page, icon: next, version: res.version });
+            setCrumbs((cs) => cs.map((c) => (c.id === page.id ? { ...c, icon: next } : c)));
             await refreshTree();
           })
           .catch((e) => notifyError(e, 'No se pudo cambiar el icono'));

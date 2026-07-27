@@ -141,6 +141,40 @@ fn save_content_persists_and_locks_versions() {
 }
 
 #[test]
+fn renaming_returns_the_new_version_so_autosave_does_not_conflict() {
+    // Regresión: renombrar (o cambiar el icono) incrementa la versión de la
+    // página. Si el llamador no adopta la versión devuelta, el siguiente
+    // guardado de contenido choca con un VERSION_CONFLICT espurio y el
+    // usuario pierde lo que acababa de escribir.
+    let tmp = TempDir::new().unwrap();
+    let mut w = ws(tmp.path());
+    let p = pages::create_page(&w.conn, &w.ctx, None, "", None).unwrap();
+
+    let after_rename = pages::rename_page(&w.conn, &w.ctx, &p.id, "Cliente Aurora").unwrap();
+    assert_eq!(after_rename.version, p.version + 1);
+    // Con la versión devuelta, el guardado pasa.
+    let saved =
+        pages::save_page_content(&mut w.conn, &w.ctx, &p.id, &doc("notas"), after_rename.version)
+            .unwrap();
+    assert_eq!(saved.version, after_rename.version + 1);
+
+    // El icono se comporta igual.
+    let after_icon = pages::set_page_icon(&w.conn, &w.ctx, &p.id, Some("📌")).unwrap();
+    assert_eq!(after_icon.version, saved.version + 1);
+    pages::save_page_content(&mut w.conn, &w.ctx, &p.id, &doc("más notas"), after_icon.version)
+        .unwrap();
+
+    // Y usar la versión anterior sigue siendo un conflicto legítimo.
+    assert!(matches!(
+        pages::save_page_content(&mut w.conn, &w.ctx, &p.id, &doc("obsoleto"), p.version),
+        Err(NodoraError::VersionConflict)
+    ));
+    let detail = pages::get_page(&w.conn, &p.id).unwrap();
+    assert!(detail.content_json.contains("más notas"));
+    assert_eq!(detail.title, "Cliente Aurora");
+}
+
+#[test]
 fn uncommitted_transaction_is_invisible_after_reopen() {
     // Simula cierre inesperado: cambios sin commit no persisten y la base
     // sigue siendo utilizable.

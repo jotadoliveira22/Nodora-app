@@ -58,6 +58,20 @@ jobs:
       - name: Build frontend
         run: pnpm --filter @nodora/desktop build
 
+      - name: Navegador para pruebas de interfaz
+        run: pnpm --filter @nodora/desktop exec playwright install --with-deps chromium
+
+      - name: Pruebas de interfaz (Playwright)
+        run: pnpm --filter @nodora/desktop test:ui
+
+      - name: Publicar informe de fallos de interfaz
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: apps/desktop/test-results/
+          if-no-files-found: ignore
+
       - name: Auditoría de dependencias (informativa)
         run: |
           pnpm audit --audit-level high || true

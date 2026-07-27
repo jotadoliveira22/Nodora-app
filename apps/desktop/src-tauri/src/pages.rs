@@ -245,32 +245,54 @@ pub fn list_archived(conn: &Connection) -> Result<Vec<PageSummary>> {
 
 // ---- Edición ---------------------------------------------------------------
 
-pub fn rename_page(conn: &Connection, ctx: &WorkspaceCtx, id: &str, title: &str) -> Result<()> {
+/// Renombra la página y devuelve su versión nueva.
+///
+/// Toda escritura sobre la entidad incrementa `version` (es la versión base
+/// de la sincronización futura, ver docs/SYNC_DATA_MODEL.md), así que el
+/// llamador debe adoptar la versión devuelta como nueva base del guardado de
+/// contenido; si no, el siguiente autosave chocaría con un VERSION_CONFLICT
+/// espurio y descartaría lo escrito.
+pub fn rename_page(
+    conn: &Connection,
+    ctx: &WorkspaceCtx,
+    id: &str,
+    title: &str,
+) -> Result<SaveResult> {
     validate_title(title)?;
     ensure_alive(conn, id)?;
     fts_delete(conn, id)?;
+    let now = now_iso();
     conn.execute(
         "UPDATE pages SET title = ?1, updated_at = ?2, updated_by = ?3, device_id = ?4,
          version = version + 1 WHERE id = ?5",
-        params![title, now_iso(), ctx.user_id, ctx.device_id, id],
+        params![title, now, ctx.user_id, ctx.device_id, id],
     )?;
     fts_insert(conn, id)?;
-    Ok(())
+    let version: i64 = conn.query_row("SELECT version FROM pages WHERE id = ?1", [id], |r| r.get(0))?;
+    Ok(SaveResult { version, updated_at: now })
 }
 
-pub fn set_page_icon(conn: &Connection, ctx: &WorkspaceCtx, id: &str, icon: Option<&str>) -> Result<()> {
+/// Cambia el icono y devuelve la versión nueva (misma razón que `rename_page`).
+pub fn set_page_icon(
+    conn: &Connection,
+    ctx: &WorkspaceCtx,
+    id: &str,
+    icon: Option<&str>,
+) -> Result<SaveResult> {
     if let Some(i) = icon {
         if i.len() > 64 {
             return Err(NodoraError::InvalidInput("icono demasiado largo".into()));
         }
     }
     ensure_alive(conn, id)?;
+    let now = now_iso();
     conn.execute(
         "UPDATE pages SET icon = ?1, updated_at = ?2, updated_by = ?3, device_id = ?4,
          version = version + 1 WHERE id = ?5",
-        params![icon, now_iso(), ctx.user_id, ctx.device_id, id],
+        params![icon, now, ctx.user_id, ctx.device_id, id],
     )?;
-    Ok(())
+    let version: i64 = conn.query_row("SELECT version FROM pages WHERE id = ?1", [id], |r| r.get(0))?;
+    Ok(SaveResult { version, updated_at: now })
 }
 
 fn ensure_alive(conn: &Connection, id: &str) -> Result<()> {
