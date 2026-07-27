@@ -39,30 +39,39 @@ Estados: `Pendiente` | `En progreso` | `Bloqueado` | `Terminado` | `Descartado`
 | 2.6 | docs/CLOUD_ARCHITECTURE.md, SELF_HOSTING.md, DEPLOYMENT_OPTIONS.md, COST_ESTIMATE.md | Terminado |
 | 2.7 | docs/THREAT_MODEL.md, SECURITY_ARCHITECTURE.md, SECURITY.md | Terminado |
 | 2.8 | docs/DESIGN_SYSTEM.md | Terminado |
-| 2.9 | Punto de control pre-implementación | En progreso |
+| 2.9 | Punto de control pre-implementación | Terminado |
 
 ## Fase 3 — MVP (implementación por slices verticales)
 
 | # | Tarea | Estado |
 |---|---|---|
-| 3.1 | Scaffold monorepo (pnpm workspaces, Tauri 2, React, TS estricto, Vite, ESLint, Prettier, Vitest) | Pendiente |
-| 3.2 | Capa SQLite en Rust: migraciones, repositorio, tests | Pendiente |
-| 3.3 | Workspaces: crear, renombrar, abrir último | Pendiente |
-| 3.4 | Páginas: CRUD, jerarquía, orden fraccionario, archivar/restaurar/eliminar, duplicar | Pendiente |
-| 3.5 | Editor por bloques (Tiptap + abstracción): tipos base, menú `/`, atajos, autosave | Pendiente |
-| 3.6 | Navegación: sidebar, favoritos, recientes, breadcrumbs, quick open | Pendiente |
-| 3.7 | Búsqueda FTS5 (título + contenido, fragmentos, filtros) | Pendiente |
-| 3.8 | Base de datos interna con vista tabla (9 tipos de propiedad, ordenar, filtrar) | Pendiente |
-| 3.9 | Enlaces internos + backlinks | Pendiente |
-| 3.10 | Adjuntos locales (carpeta gestionada, hash, ids internos) | Pendiente |
-| 3.11 | Export Markdown/JSON, respaldo y restauración con validación | Pendiente |
-| 3.12 | Recuperación ante cierre inesperado / autosave robusto | Pendiente |
+| 3.1 | Scaffold monorepo (pnpm workspaces, Tauri 2, React, TS estricto, Vite, ESLint, Prettier, Vitest) | Terminado |
+| 3.2 | Capa SQLite en Rust: migraciones, repositorio, tests | Terminado |
+| 3.3 | Workspaces: crear, renombrar, abrir último | Terminado |
+| 3.4 | Páginas: CRUD, jerarquía, orden fraccionario, archivar/restaurar/eliminar, duplicar | Terminado |
+| 3.5 | Editor por bloques (Tiptap + abstracción): tipos base, menú `/`, atajos, autosave | Terminado |
+| 3.6 | Navegación: sidebar, favoritos, recientes, breadcrumbs, quick open | Terminado |
+| 3.7 | Búsqueda FTS5 (título + contenido, fragmentos, filtros) | Terminado |
+| 3.8 | Base de datos interna con vista tabla (9 tipos de propiedad, ordenar, filtrar) | Terminado |
+| 3.9 | Enlaces internos + backlinks | Terminado |
+| 3.10 | Adjuntos locales (carpeta gestionada, hash, ids internos) | Terminado |
+| 3.11 | Export Markdown/JSON, respaldo y restauración con validación | Terminado |
+| 3.12 | Recuperación ante cierre inesperado / autosave robusto | Terminado |
 
 ## Fase 4 — Calidad y empaquetado
 
 | # | Tarea | Estado |
 |---|---|---|
-| 4.1 | Suite de pruebas críticas (persistencia, migraciones, backup corrupto, unicode, volumen) | Pendiente |
-| 4.2 | CI: lint + typecheck + tests + build | Pendiente |
-| 4.3 | CI: instalador Windows (NSIS) en runner Windows | Pendiente |
-| 4.4 | Documentación final de instalación y uso | Pendiente |
+| 4.1 | Suite de pruebas críticas (persistencia, migraciones, backup corrupto, unicode, volumen) | Terminado |
+| 4.2 | CI: lint + typecheck + tests + build | Terminado |
+| 4.3 | CI: instalador Windows (NSIS) en runner Windows | En progreso (workflow escrito, falta ejecutarlo) |
+| 4.4 | Documentación final de instalación y uso | En progreso (README raíz listo) |
+
+## Fase 5 — Cierre del MVP
+
+| # | Tarea | Estado |
+|---|---|---|
+| 5.1 | Ejecutar CI y obtener artefacto NSIS de Windows | Pendiente |
+| 5.2 | Pruebas de interfaz automatizadas (E2E) | Pendiente |
+| 5.3 | Guía de usuario e instalación (docs/USER_GUIDE.md) | Pendiente |
+| 5.4 | Repaso de accesibilidad y pulido de UX | Pendiente |
