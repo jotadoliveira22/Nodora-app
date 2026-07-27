@@ -65,13 +65,13 @@ Estados: `Pendiente` | `En progreso` | `Bloqueado` | `Terminado` | `Descartado`
 | 4.1 | Suite de pruebas críticas (persistencia, migraciones, backup corrupto, unicode, volumen) | Terminado |
 | 4.2 | CI: lint + typecheck + tests + build | Terminado |
 | 4.3 | CI: instalador Windows (NSIS) en runner Windows | En progreso (workflow escrito, falta ejecutarlo) |
-| 4.4 | Documentación final de instalación y uso | En progreso (README raíz listo) |
+| 4.4 | Documentación final de instalación y uso | Terminado |
 
 ## Fase 5 — Cierre del MVP
 
 | # | Tarea | Estado |
 |---|---|---|
-| 5.1 | Ejecutar CI y obtener artefacto NSIS de Windows | Pendiente |
+| 5.1 | Ejecutar CI y obtener artefacto NSIS de Windows | En progreso |
 | 5.2 | Pruebas de interfaz automatizadas (E2E) | Pendiente |
-| 5.3 | Guía de usuario e instalación (docs/USER_GUIDE.md) | Pendiente |
+| 5.3 | Guía de usuario e instalación (docs/USER_GUIDE.md) | Terminado |
 | 5.4 | Repaso de accesibilidad y pulido de UX | Pendiente |
