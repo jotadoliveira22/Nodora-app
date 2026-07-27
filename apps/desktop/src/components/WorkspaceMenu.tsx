@@ -10,9 +10,10 @@ import {
   Package,
   RefreshCcw,
   Sun,
+  Trash2,
 } from 'lucide-react';
 
-import { exportApi, workspaceApi } from '../services/api';
+import { attachmentsApi, exportApi, workspaceApi } from '../services/api';
 import { useAppStore } from '../stores/appStore';
 import { ArchiveModal } from './ArchiveModal';
 import { ContextMenu, Modal, type MenuItem } from './ui';
@@ -75,6 +76,29 @@ export function WorkspaceMenu() {
     }
   };
 
+  const liberarEspacio = async () => {
+    try {
+      const previo = await attachmentsApi.collectUnreferenced(true);
+      if (previo.unreferenced === 0) {
+        toast(
+          previo.orphanFiles > 0
+            ? `No hay adjuntos que liberar. Hay ${previo.orphanFiles} archivo(s) no registrado(s), que no se tocan.`
+            : 'No hay adjuntos sin usar: nada que liberar.',
+        );
+        return;
+      }
+      const mb = (previo.bytesFreed / (1024 * 1024)).toFixed(2);
+      const ok = window.confirm(
+        `Se eliminarán ${previo.unreferenced} adjunto(s) que ninguna página usa ya y se recuperarán ${mb} MB.\n\nLas imágenes que sigan insertadas en alguna página no se tocan. Esta acción no se puede deshacer: crea un respaldo antes si tienes dudas.\n\n¿Continuar?`,
+      );
+      if (!ok) return;
+      const hecho = await attachmentsApi.collectUnreferenced(false);
+      toast(`Liberados ${hecho.unreferenced} adjunto(s) (${mb} MB).`);
+    } catch (e) {
+      notifyError(e, 'No se pudo liberar espacio');
+    }
+  };
+
   const items: MenuItem[] = [
     {
       label: 'Renombrar espacio…',
@@ -103,6 +127,11 @@ export function WorkspaceMenu() {
       onClick: () => void exportJson(),
     },
     { label: 'Crear respaldo…', icon: <Package size={15} />, onClick: () => void createBackup() },
+    {
+      label: 'Liberar espacio…',
+      icon: <Trash2 size={15} />,
+      onClick: () => void liberarEspacio(),
+    },
     {
       label: 'Restaurar respaldo…',
       icon: <FolderOpen size={15} />,

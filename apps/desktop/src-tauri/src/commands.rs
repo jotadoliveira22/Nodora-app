@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use base64::Engine;
 use tauri::{AppHandle, Manager, State};
 
-use crate::attachments::{self, AttachmentInfo};
+use crate::attachments::{self, AttachmentInfo, CleanupReport};
 use crate::backup::{self, BackupSummary};
 use crate::dbview::{
     self, ConversionReport, DatabaseDetail, DatabaseProperty, RecordFilter, RecordRow, RecordSort,
@@ -511,6 +511,16 @@ pub fn resolve_attachment(state: State<'_, AppState>, id: String) -> Result<Stri
 #[tauri::command]
 pub fn verify_attachment(state: State<'_, AppState>, id: String) -> Result<bool> {
     state.with_ws(|ws| attachments::verify(ws, &id))
+}
+
+/// Libera los adjuntos que ninguna página referencia ya. Con `dry_run` solo
+/// informa de cuánto se recuperaría.
+#[tauri::command]
+pub fn collect_unreferenced_attachments(
+    state: State<'_, AppState>,
+    dry_run: Option<bool>,
+) -> Result<CleanupReport> {
+    state.with_ws(|ws| attachments::collect_unreferenced(ws, dry_run.unwrap_or(true)))
 }
 
 // ---- Exportación y respaldos ---------------------------------------------------------

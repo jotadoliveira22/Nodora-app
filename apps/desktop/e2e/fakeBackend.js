@@ -448,6 +448,12 @@
     }),
     resolve_attachment: () => '/fake/attachments/x.png',
     verify_attachment: () => true,
+    collect_unreferenced_attachments: ({ dryRun }) => ({
+      unreferenced: 2,
+      bytesFreed: 3 * 1024 * 1024,
+      orphanFiles: 0,
+      applied: !dryRun,
+    }),
     export_page_markdown: () => ['/fake/salida.md'],
     export_workspace_json: () => null,
     create_backup: () => '/fake/backups/nodora-backup.zip',

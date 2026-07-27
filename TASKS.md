@@ -76,4 +76,4 @@ Estados: `Pendiente` | `En progreso` | `Bloqueado` | `Terminado` | `Descartado`
 | 5.3 | Guía de usuario e instalación (docs/USER_GUIDE.md) | Terminado |
 | 5.4 | Repaso de accesibilidad (WCAG AA verificado con axe-core) | Terminado |
 | 5.5 | Registrar deuda técnica (docs/TECHNICAL_DEBT.md) | Terminado |
-| 5.6 | Saldar deuda D1 (liberar adjuntos sin referencias) | Pendiente |
+| 5.6 | Saldar deuda D1 (liberar adjuntos sin referencias) | Terminado |

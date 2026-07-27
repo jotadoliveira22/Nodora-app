@@ -4,19 +4,27 @@
 > deuda técnica introducida»). Cada entrada indica el impacto real, por qué se
 > aceptó y cómo se saldaría.
 
-## D1 — Los adjuntos no se liberan al eliminar contenido
+## D1 — Los adjuntos no se liberan al eliminar contenido — **SALDADA**
 
-- **Qué pasa:** `attachments.ref_count` se incrementa al insertar una imagen y
-  al duplicar una página, pero no se decrementa al borrar el bloque de imagen
-  ni al eliminar definitivamente una página. Los archivos quedan en
-  `attachments/` indefinidamente.
-- **Impacto:** el workspace crece con imágenes ya no referenciadas. No hay
-  corrupción ni pérdida de datos; los respaldos incluyen esos archivos.
-- **Por qué se aceptó:** eliminar un archivo por error es peor que conservar
-  uno de más; una recolección segura exige recorrer todos los documentos.
-- **Cómo se salda:** una operación de mantenimiento («Liberar espacio») que
-  recorra `content_json` de todas las páginas vivas, recalcule las referencias
-  reales y borre los archivos sin referencias, previo respaldo. V2.
+- **Qué pasaba:** `attachments.ref_count` se incrementaba al insertar una
+  imagen y al duplicar una página, pero no se decrementaba al borrar el bloque
+  ni al eliminar la página, así que los archivos se acumulaban.
+- **Resuelto (2026-07-27):** «Liberar espacio» en el menú del espacio de
+  trabajo. La verdad son los documentos, no el contador: se recorren todas las
+  páginas vivas, se extraen las referencias reales, se recalcula `ref_count` y
+  se borran los archivos que ya no usa nadie.
+- **Salvaguardas:** primero se simula y se pide confirmación indicando cuántos
+  adjuntos y cuántos MB se liberarían; los archivos presentes en la carpeta
+  que la base no reconoce (por ejemplo, de una copia a medias) se informan
+  pero **nunca** se borran solos; si un documento está corrupto y no puede
+  analizarse, sus referencias se ignoran de forma conservadora; la fila del
+  adjunto se conserva como tombstone para poder replicar la eliminación
+  cuando exista sincronización.
+- **Cubierto por:** `tests/robustness.rs`
+  (`unreferenced_attachments_are_collected_but_referenced_ones_survive`,
+  `cleanup_never_deletes_files_it_does_not_know`,
+  `cleanup_keeps_attachments_when_a_document_is_corrupt`) y la prueba de
+  interfaz «liberar espacio informa de lo que se borrará antes de hacerlo».
 
 ## D2 — Los títulos mostrados en enlaces internos no se refrescan en vivo
 

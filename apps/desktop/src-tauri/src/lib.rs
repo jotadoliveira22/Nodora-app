@@ -104,6 +104,7 @@ pub fn run() {
             commands::import_attachment_base64,
             commands::resolve_attachment,
             commands::verify_attachment,
+            commands::collect_unreferenced_attachments,
             commands::export_page_markdown,
             commands::export_workspace_json,
             commands::create_backup,

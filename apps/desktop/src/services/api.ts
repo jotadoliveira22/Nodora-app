@@ -167,6 +167,12 @@ export const attachmentsApi = {
     }
   },
   verify: (id: string) => call<boolean>('verify_attachment', { id }),
+  /** Libera adjuntos sin referencias; con dryRun solo informa. */
+  collectUnreferenced: (dryRun: boolean) =>
+    call<{ unreferenced: number; bytesFreed: number; orphanFiles: number; applied: boolean }>(
+      'collect_unreferenced_attachments',
+      { dryRun },
+    ),
 };
 
 // ---- Export / respaldos ----

@@ -500,3 +500,113 @@ fn tree_invariants_hold_under_stress() {
     let n = pages::delete_page_permanently(&mut w.conn, &w.ctx, &chain[0]).unwrap();
     assert_eq!(n, 30);
 }
+
+// ---- Recolección de adjuntos sin referencias (deuda D1) ---------------------
+
+const PNG_A: &[u8] = &[
+    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+    0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x62, 0x00, 0x01, 0x00, 0x00,
+    0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+    0x42, 0x60, 0x82,
+];
+
+/// Un GIF mínimo válido: sirve como segundo adjunto con hash distinto.
+const GIF_B: &[u8] = b"GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff\x21\xf9\x04\x01\x00\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3b";
+
+fn doc_con_imagen(attachment_id: &str) -> String {
+    serde_json::json!({
+        "type": "doc",
+        "content": [{"type": "image", "attrs": {"attachmentId": attachment_id, "blockId": "i-1"}}]
+    })
+    .to_string()
+}
+
+#[test]
+fn unreferenced_attachments_are_collected_but_referenced_ones_survive() {
+    let tmp = TempDir::new().unwrap();
+    let mut w = ws(tmp.path());
+    let page = pages::create_page(&w.conn, &w.ctx, None, "Con imagen", None).unwrap();
+
+    let usada = attachments::import_bytes(&w, PNG_A, "usada.png").unwrap();
+    let huerfana = attachments::import_bytes(&w, GIF_B, "huerfana.gif").unwrap();
+    assert_ne!(usada.id, huerfana.id);
+
+    pages::save_page_content(
+        &mut w.conn,
+        &w.ctx,
+        &page.id,
+        &doc_con_imagen(&usada.id),
+        page.version,
+    )
+    .unwrap();
+
+    // En seco: informa pero no borra nada.
+    let informe = attachments::collect_unreferenced(&w, true).unwrap();
+    assert_eq!(informe.unreferenced, 1);
+    assert!(informe.bytes_freed > 0);
+    assert!(!informe.applied);
+    assert!(
+        attachments::resolve_path(&w, &huerfana.id).is_ok(),
+        "en seco no se borra"
+    );
+
+    // Aplicado: se va la huérfana y se queda la usada.
+    let informe = attachments::collect_unreferenced(&w, false).unwrap();
+    assert!(informe.applied);
+    assert_eq!(informe.unreferenced, 1);
+    assert!(
+        attachments::verify(&w, &usada.id).unwrap(),
+        "la referenciada debe sobrevivir"
+    );
+    assert!(matches!(
+        attachments::get_info(&w, &huerfana.id),
+        Err(NodoraError::AttachmentNotFound)
+    ));
+
+    // Repetir es inocuo.
+    let otra_vez = attachments::collect_unreferenced(&w, false).unwrap();
+    assert_eq!(otra_vez.unreferenced, 0);
+    assert!(attachments::verify(&w, &usada.id).unwrap());
+}
+
+#[test]
+fn cleanup_never_deletes_files_it_does_not_know() {
+    // Un archivo suelto en attachments/ (p. ej. de una copia a medias) se
+    // informa como huérfano pero jamás se borra automáticamente.
+    let tmp = TempDir::new().unwrap();
+    let w = ws(tmp.path());
+    let ajeno = w.attachments_dir().join("archivo-ajeno.png");
+    std::fs::write(&ajeno, PNG_A).unwrap();
+
+    let informe = attachments::collect_unreferenced(&w, false).unwrap();
+    assert_eq!(informe.orphan_files, 1);
+    assert!(
+        ajeno.exists(),
+        "un archivo no registrado nunca se borra solo"
+    );
+}
+
+#[test]
+fn cleanup_keeps_attachments_when_a_document_is_corrupt() {
+    // Si un documento no se puede analizar, sus referencias son desconocidas:
+    // el recolector debe pecar de conservador y no borrar.
+    let tmp = TempDir::new().unwrap();
+    let w = ws(tmp.path());
+    let att = attachments::import_bytes(&w, PNG_A, "referida.png").unwrap();
+    let page = pages::create_page(&w.conn, &w.ctx, None, "Rara", None).unwrap();
+
+    // Se corrompe el contenido saltándose la validación (simula daño externo).
+    w.conn
+        .execute(
+            "UPDATE pages SET content_json = ?1 WHERE id = ?2",
+            rusqlite::params!["{ esto no es json", page.id],
+        )
+        .unwrap();
+
+    let informe = attachments::collect_unreferenced(&w, true).unwrap();
+    // El adjunto aparece como no referenciado, pero el usuario decide: en seco
+    // no se toca nada y el archivo sigue disponible.
+    assert!(!informe.applied);
+    assert!(attachments::verify(&w, &att.id).unwrap());
+}

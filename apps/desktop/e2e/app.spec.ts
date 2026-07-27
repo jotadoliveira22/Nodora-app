@@ -335,3 +335,22 @@ test('restaurar un respaldo pide confirmación mostrando su resumen verificado',
   expect(messages[0]).toContain('Respaldo de prueba');
   expect(messages[0]).toContain('espacio NUEVO');
 });
+
+test('liberar espacio informa de lo que se borrará antes de hacerlo', async ({ page }) => {
+  await createWorkspace(page);
+
+  const mensajes: string[] = [];
+  page.on('dialog', (d) => {
+    mensajes.push(d.message());
+    void d.accept();
+  });
+
+  await page.locator('.nd-ws-header').click();
+  await page.getByRole('menuitem', { name: /Liberar espacio/ }).click();
+
+  await expect.poll(() => mensajes.length).toBeGreaterThan(0);
+  expect(mensajes[0]).toContain('2 adjunto(s)');
+  expect(mensajes[0]).toContain('3.00 MB');
+  expect(mensajes[0]).toContain('no se tocan');
+  await expect(page.locator('.nd-toast').first()).toContainText('Liberados 2');
+});
