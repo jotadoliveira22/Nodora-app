@@ -4,9 +4,9 @@
 
 ## Estado actual
 
-**Fase 3 (MVP) — primera versión vertical completa implementada y verificada
-en Linux.** Pendiente: validar el instalador de Windows en CI y pulir
-detalles de UX/pruebas de interfaz.
+**Fase 3 (MVP) completa y verificada; Fase 4 (calidad y empaquetado) en
+curso.** El pipeline de CI pasa íntegro en Linux; el job de Windows está
+pendiente de completar el instalador NSIS.
 
 ## Entorno de desarrollo verificado
 
@@ -59,8 +59,9 @@ migraciones SQL iniciales. ADR-000 … ADR-009 en `DECISIONS.md`.
 
 ## Funciones en desarrollo
 
-- Ninguna en curso. Siguiente bloque: verificación del instalador Windows en
-  CI y pruebas de interfaz automatizadas.
+- Instalador de Windows: el workflow ya ejecuta las pruebas de Rust en
+  `windows-latest` y encadena el empaquetado NSIS; falta una ejecución
+  completa que publique el artefacto.
 
 ## Bloqueos
 
@@ -68,23 +69,26 @@ migraciones SQL iniciales. ADR-000 … ADR-009 en `DECISIONS.md`.
 
 ## Riesgos activos
 
-1. **Instalador Windows sin verificar todavía** — el workflow existe pero no
-   se ha ejecutado; es el único criterio de éxito del MVP aún sin evidencia.
-2. **Sin pruebas E2E de interfaz** — la lógica está cubierta por 43 pruebas
-   automatizadas, pero los flujos de UI solo se han verificado por arranque
-   real de la aplicación, no por automatización.
+1. **Instalador Windows sin artefacto todavía** — es el único criterio de
+   éxito del MVP aún sin evidencia. Las pruebas de Rust ya se ejecutan y
+   pasan en `windows-latest`; falta que termine el empaquetado NSIS.
+2. **Las pruebas de interfaz usan un backend en memoria** — verifican los
+   flujos de UI, no la persistencia real (esa la cubren las 44 pruebas de
+   Rust). El contrato entre ambos lados está fijado por la prueba de
+   serialización IPC.
 3. **Sin firma de código** — Windows SmartScreen advertirá al instalar
    (aceptado para uso privado; documentado en `docs/ARCHITECTURE.md`).
 
 ## Próximo paso exacto
 
-Ejecutar el workflow de CI en GitHub para obtener el artefacto NSIS y validar
-el criterio de éxito nº 1 (instalar en Windows). Después: pruebas de interfaz
-y pulido de UX.
+Esperar a que el job `windows-installer` publique el artefacto NSIS y
+comprobar que se genera correctamente (criterio de éxito nº 1). Después:
+repaso de accesibilidad y pulido de UX (tarea 5.4).
 
 ## Última prueba ejecutada
 
-`cargo test` (2026-07-14): **43 pruebas, 43 correctas**
+`cargo test` (2026-07-27): **44 pruebas, 44 correctas** (Linux) y **44
+correctas en Windows** vía CI
 - 13 unitarias (orden fraccionario, validación de documentos)
 - 18 de integración (`tests/core.rs`: workspace, páginas, guardado, enlaces,
   búsqueda, bases de datos, adjuntos, exportación, respaldos, volumen)
@@ -93,9 +97,21 @@ y pulido de UX.
   documentos inválidos, operaciones repetidas, contrato IPC camelCase,
   multilingüe extremo a extremo, límites de adjuntos, invariantes del árbol)
 
+`pnpm --filter @nodora/desktop test:ui` (Playwright): **15 pruebas de
+interfaz, 15 correctas** — bienvenida, creación y titulación de páginas,
+autosave, menú `/`, atajos de Markdown, enlaces `@` con backlinks, búsqueda
+Ctrl+K, archivar/restaurar, bases de datos, navegación, subpáginas, tema
+oscuro, manejo de error de guardado y validación de respaldo.
+
 `pnpm -r test`: 12 pruebas correctas (10 de orden fraccionario en TS + 2 de
 renderizado seguro de fragmentos de búsqueda).
 `pnpm lint`, `pnpm format:check`, `pnpm -r typecheck`: sin errores.
+
+**Defectos encontrados por las pruebas de interfaz y corregidos:**
+1. Pérdida de contenido al titular una página: `rename_page` incrementaba la
+   versión y el autosave seguía usando la anterior, provocando un
+   `VERSION_CONFLICT` espurio que descartaba lo escrito.
+2. Los breadcrumbs mantenían el título anterior tras renombrar.
 
 ## Resultado de compilación
 
@@ -105,4 +121,7 @@ renderizado seguro de fragmentos de búsqueda).
 - **Arranque real verificado** (2026-07-14): el binario de release se ejecutó
   bajo Xvfb, permaneció vivo, creó su directorio de datos, aplicó las
   migraciones de `app.db` (schema_version = 1) y generó el `device_id`.
-- Instalador Windows NSIS: **pendiente de ejecución en CI**.
+- CI (run #3, 2026-07-27): job `quality` en Linux **correcto** de principio a
+  fin (lint, formato, typecheck, pruebas TS, 44 pruebas de Rust, build).
+- CI job `windows-installer`: las pruebas de Rust pasan en `windows-latest`;
+  el artefacto NSIS está **pendiente de una ejecución completa**.
