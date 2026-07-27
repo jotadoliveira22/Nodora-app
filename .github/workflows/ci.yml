@@ -5,6 +5,12 @@ on:
     branches: ['**']
   pull_request:
 
+# Un push nuevo sobre la misma rama deja obsoleto al anterior: se cancela
+# para no encolar compilaciones de Windows que ya no interesan.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   CARGO_TERM_COLOR: always
 

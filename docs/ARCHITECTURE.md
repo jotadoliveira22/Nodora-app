@@ -84,6 +84,10 @@ En `packages/shared/src/contracts/` (TS) y espejo conceptual en Rust:
 
 - Desarrollo y CI Linux: `pnpm tauri dev` / `pnpm tauri build` (deb/AppImage
   como smoke test) + suites de test.
+- Perfil de release: LTO «thin» con `opt-level = "s"` y `strip`. El LTO
+  completo producía un binario un 22 % menor (6,5 MB frente a 8,3 MB) pero
+  su enlazado superaba los 45 minutos en los runners de Windows, así que se
+  eligió el compromiso rápido.
 - Release Windows: GitHub Actions `windows-latest` → instalador **NSIS**
   (`.exe`). Firma de código fuera de alcance del MVP (documentado como deuda:
   SmartScreen advertirá; se acepta para uso privado).

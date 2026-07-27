@@ -33,7 +33,12 @@ tracing-appender = "0.2"
 tempfile = "3"
 
 [profile.release]
-codegen-units = 1
-lto = true
+# LTO "thin" en lugar del completo: con LTO completo y codegen-units=1 el
+# enlazado superaba los 45 minutos en los runners de Windows y hacía el
+# pipeline inviable. Coste medido del cambio: el binario pasa de 6,5 MB a
+# 8,3 MB (compilación local de 5m28s a 3m07s). Se acepta: 8 MB sigue siendo
+# muy pequeño para una app de escritorio y el pipeline vuelve a ser usable.
+codegen-units = 16
+lto = "thin"
 opt-level = "s"
 strip = true
