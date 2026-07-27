@@ -25,6 +25,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
   build) más job de empaquetado del instalador NSIS en `windows-latest`.
 
 ### Verificado
+- 2026-07-27 — **Instalador de Windows generado y publicado por CI**
+  (artefacto `nodora-windows-installer`, 2,6 MB), con los dos jobs del
+  pipeline en verde: Linux (lint, formato, typecheck, 53 pruebas de Rust,
+  12 de TypeScript, 24 de interfaz y accesibilidad, build) y Windows
+  (53 pruebas de Rust + empaquetado NSIS).
 - 2026-07-14 — Compilación de escritorio completa (`Nodora_0.1.0_amd64.deb`) y
   arranque real del binario bajo Xvfb: la aplicación permanece viva, crea su
   directorio de datos, aplica las migraciones de `app.db` y genera su

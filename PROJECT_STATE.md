@@ -4,9 +4,9 @@
 
 ## Estado actual
 
-**Fase 3 (MVP) completa y verificada; Fase 4 (calidad y empaquetado) en
-curso.** El pipeline de CI pasa íntegro en Linux; el job de Windows está
-pendiente de completar el instalador NSIS.
+**MVP completo y verificado de extremo a extremo.** Los 15 criterios de éxito
+de `docs/NODORA_SPEC.md` §16 tienen evidencia automatizada. El pipeline de CI
+pasa íntegro en Linux y en Windows, y publica el instalador NSIS.
 
 ## Entorno de desarrollo verificado
 
@@ -62,9 +62,9 @@ migraciones SQL iniciales. ADR-000 … ADR-009 en `DECISIONS.md`.
 
 ## Funciones en desarrollo
 
-- Instalador de Windows: el workflow ya ejecuta las pruebas de Rust en
-  `windows-latest` y encadena el empaquetado NSIS; falta una ejecución
-  completa que publique el artefacto.
+- Ninguna. El siguiente bloque de trabajo es el Horizonte 1 del roadmap
+  (`docs/FUTURE_ROADMAP.md`): historial de versiones, bloques avanzados,
+  vistas adicionales de bases de datos e importadores.
 
 ## Bloqueos
 
@@ -79,36 +79,41 @@ máximo de documento (D3), instalador sin firmar (D4), sin auto-actualización
 
 ## Riesgos activos
 
-1. **Instalador Windows sin artefacto todavía** — es el único criterio de
-   éxito del MVP aún sin evidencia. Las pruebas de Rust ya se ejecutan y
-   pasan en `windows-latest`; falta que termine el empaquetado NSIS.
+1. **El instalador no está firmado** — SmartScreen advertirá al instalar
+   (deuda D4, aceptada para uso privado).
 2. **Las pruebas de interfaz usan un backend en memoria** — verifican los
    flujos de UI, no la persistencia real (esa la cubren las 44 pruebas de
    Rust). El contrato entre ambos lados está fijado por la prueba de
    serialización IPC.
-3. **Sin firma de código** — Windows SmartScreen advertirá al instalar
-   (aceptado para uso privado; documentado en `docs/ARCHITECTURE.md`).
+3. **El instalador no se ha ejecutado en una máquina Windows real** — CI
+   demuestra que se genera correctamente; la instalación efectiva depende de
+   que el propietario lo descargue y lo pruebe.
 
 ## Próximo paso exacto
 
-Esperar a que el job `windows-installer` publique el artefacto NSIS y
-comprobar que se genera correctamente (criterio de éxito nº 1). Después:
-repaso de accesibilidad y pulido de UX (tarea 5.4).
+Descargar el artefacto `nodora-windows-installer` del último run de CI e
+instalarlo en un Windows real para confirmar el criterio 1 en la práctica.
+A partir de ahí, arrancar el Horizonte 1 del roadmap.
 
 ## Última prueba ejecutada
 
-`cargo test` (2026-07-27): **44 pruebas, 44 correctas** (Linux) y **44
-correctas en Windows** vía CI
+`cargo test` (2026-07-27): **53 pruebas, 53 correctas** en Linux y en Windows
+(vía CI)
 - 13 unitarias (orden fraccionario, validación de documentos)
-- 18 de integración (`tests/core.rs`: workspace, páginas, guardado, enlaces,
+- 2 de aceptación (`tests/acceptance.rs`: los criterios 2-13 y 15 recorridos
+  como una historia de usuario completa, más la portabilidad del espacio)
+- 4 de guardarraíl offline (`tests/offline.rs`: sin dependencias de red, sin
+  permisos de red, CSP sin orígenes remotos, frontend sin llamadas)
+- 19 de integración (`tests/core.rs`: workspace, páginas, guardado, enlaces,
   búsqueda, bases de datos, adjuntos, exportación, respaldos, volumen)
-- 12 de robustez (`tests/robustness.rs`: migración desde base antigua,
+- 15 de robustez (`tests/robustness.rs`: migración desde base antigua,
   rollback de migración fallida, inyección SQL, path traversal, zip-slip,
   documentos inválidos, operaciones repetidas, contrato IPC camelCase,
-  multilingüe extremo a extremo, límites de adjuntos, invariantes del árbol)
+  multilingüe extremo a extremo, límites de adjuntos, invariantes del árbol y
+  seguridad del recolector de adjuntos)
 
-`pnpm --filter @nodora/desktop test:ui` (Playwright): **15 pruebas de
-interfaz, 15 correctas** — bienvenida, creación y titulación de páginas,
+`pnpm --filter @nodora/desktop test:ui` (Playwright): **24 pruebas, 24
+correctas** (16 de interfaz + 8 de accesibilidad WCAG 2.1 AA) — bienvenida, creación y titulación de páginas,
 autosave, menú `/`, atajos de Markdown, enlaces `@` con backlinks, búsqueda
 Ctrl+K, archivar/restaurar, bases de datos, navegación, subpáginas, tema
 oscuro, manejo de error de guardado y validación de respaldo.
@@ -131,7 +136,9 @@ renderizado seguro de fragmentos de búsqueda).
 - **Arranque real verificado** (2026-07-14): el binario de release se ejecutó
   bajo Xvfb, permaneció vivo, creó su directorio de datos, aplicó las
   migraciones de `app.db` (schema_version = 1) y generó el `device_id`.
-- CI (run #3, 2026-07-27): job `quality` en Linux **correcto** de principio a
-  fin (lint, formato, typecheck, pruebas TS, 44 pruebas de Rust, build).
-- CI job `windows-installer`: las pruebas de Rust pasan en `windows-latest`;
-  el artefacto NSIS está **pendiente de una ejecución completa**.
+- CI (run #16, commit `e0c7a92`, 2026-07-27): **ambos jobs correctos**.
+  - Linux: lint, formato TS y Rust, typecheck, pruebas TS, 53 pruebas de
+    Rust, build del frontend, 24 pruebas de interfaz y auditoría.
+  - Windows: 53 pruebas de Rust y compilación del instalador NSIS en 6 min.
+- **Artefacto publicado:** `nodora-windows-installer` (2,6 MB),
+  sha256 `4a0e5066…`. Es la evidencia del criterio de éxito nº 1.
