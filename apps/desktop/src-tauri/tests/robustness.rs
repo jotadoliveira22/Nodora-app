@@ -136,8 +136,23 @@ fn relative_and_traversal_paths_are_rejected() {
             "la ruta {evil:?} debía rechazarse"
         );
     }
-    // Una ruta absoluta sí se admite (el diálogo nativo las produce).
-    assert!(export::ensure_safe_dir("/tmp/destino").is_ok());
+    // Una ruta absoluta sí se admite (el diálogo nativo las produce). Lo que
+    // cuenta como absoluta depende de la plataforma: en Windows "/tmp/x" no
+    // lo es, porque carece de unidad.
+    let absolute = if cfg!(windows) { "C:\\Users\\nodora\\destino" } else { "/tmp/destino" };
+    assert!(
+        export::ensure_safe_dir(absolute).is_ok(),
+        "una ruta absoluta de la plataforma debe admitirse: {absolute}"
+    );
+    // Y en Windows tampoco valen las rutas sin unidad ni las relativas de unidad.
+    if cfg!(windows) {
+        for evil in ["/tmp/destino", "C:destino"] {
+            assert!(
+                matches!(export::ensure_safe_dir(evil), Err(NodoraError::PathNotAllowed)),
+                "la ruta {evil:?} debía rechazarse en Windows"
+            );
+        }
+    }
 }
 
 #[test]
