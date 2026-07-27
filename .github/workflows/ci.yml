@@ -15,9 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # La versión de pnpm se toma de "packageManager" en package.json:
+      # declararla aquí también hace fallar la acción por versión duplicada.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/setup-node@v4
         with:
@@ -71,9 +71,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # La versión de pnpm se toma de "packageManager" en package.json:
+      # declararla aquí también hace fallar la acción por versión duplicada.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - uses: actions/setup-node@v4
         with:
