@@ -1,6 +1,6 @@
 # PROJECT_STATE.md — Nodora
 
-> Última actualización: 2026-07-14
+> Última actualización: 2026-07-27
 
 ## Estado actual
 
@@ -43,7 +43,10 @@ migraciones SQL iniciales. ADR-000 … ADR-009 en `DECISIONS.md`.
 - Exportación a Markdown (con subpáginas y assets) y a JSON versionado.
 - Respaldos ZIP con manifiesto y hashes; validación completa previa a
   restaurar; restauración siempre a un espacio nuevo.
-- 45 comandos IPC tipados; errores con códigos estables sin filtrar detalles
+- Recolección segura de adjuntos sin referencias («Liberar espacio»), que
+  recalcula las referencias reales desde el contenido y nunca borra archivos
+  que no reconoce.
+- 46 comandos IPC tipados; errores con códigos estables sin filtrar detalles
   internos; logging estructurado sin contenido de usuario.
 
 **Frontend (React + TypeScript estricto):**
