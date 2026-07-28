@@ -354,3 +354,65 @@ test('liberar espacio informa de lo que se borrará antes de hacerlo', async ({ 
   expect(mensajes[0]).toContain('no se tocan');
   await expect(page.locator('.nd-toast').first()).toContainText('Liberados 2');
 });
+
+test('el menú "/" se puede usar con el ratón, no solo con el teclado', async ({ page }) => {
+  await createWorkspace(page);
+  await page.getByRole('button', { name: 'Nueva página' }).first().click();
+
+  const editor = page.locator('.nd-editor .tiptap');
+  await editor.click();
+  await editor.pressSequentially('/');
+  const menu = page.locator('.nd-floating-menu');
+  await expect(menu).toBeVisible();
+
+  // Clic directo sobre una opción, que es lo que hace cualquier persona.
+  await menu.getByText('Lista de tareas', { exact: true }).click();
+  await expect(menu).toBeHidden();
+
+  await editor.pressSequentially('Comprar sellos');
+  await expect(editor.locator('ul[data-type="taskList"]')).toContainText('Comprar sellos');
+});
+
+test('el menú "@" se puede usar con el ratón', async ({ page }) => {
+  await createWorkspace(page);
+  await page.getByRole('button', { name: 'Nueva página' }).first().click();
+  await setTitle(page, 'Destino del enlace');
+  await page.getByRole('button', { name: 'Nueva página' }).first().click();
+  await setTitle(page, 'Origen');
+
+  const editor = page.locator('.nd-editor .tiptap');
+  await editor.click();
+  await editor.pressSequentially('@Destino');
+  const menu = page.locator('.nd-floating-menu');
+  await expect(menu).toBeVisible();
+
+  await menu.getByText('Destino del enlace').click();
+  await expect(editor.locator('.nd-page-link')).toContainText('Destino del enlace');
+});
+
+test('se pueden crear y cambiar espacios sin salir de la aplicación', async ({ page }) => {
+  await createWorkspace(page, 'Consultora A');
+
+  // El gestor de espacios está en el menú del espacio.
+  await page.locator('.nd-ws-header').click();
+  await page.getByRole('menuitem', { name: /Espacios de trabajo/ }).click();
+  const dialog = page.getByRole('dialog', { name: 'Espacios de trabajo' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText('Consultora A');
+
+  // Crear uno nuevo desde aquí y quedarse dentro de él.
+  await dialog.getByRole('button', { name: /Espacio nuevo/ }).click();
+  await dialog.getByLabel('Nombre del espacio nuevo').fill('Consultora B');
+  await dialog.getByRole('button', { name: /Crear y abrir/ }).click();
+
+  await expect(dialog).toBeHidden();
+  await expect(page.locator('.nd-ws-name')).toHaveText('Consultora B');
+  await expect(page.locator('.nd-toast').first()).toContainText('Consultora B');
+
+  // Y volver al primero desde la lista de espacios conocidos.
+  await page.locator('.nd-ws-header').click();
+  await page.getByRole('menuitem', { name: /Espacios de trabajo/ }).click();
+  const dialog2 = page.getByRole('dialog', { name: 'Espacios de trabajo' });
+  await dialog2.getByRole('button', { name: /Consultora A/ }).click();
+  await expect(page.locator('.nd-ws-name')).toHaveText('Consultora A');
+});

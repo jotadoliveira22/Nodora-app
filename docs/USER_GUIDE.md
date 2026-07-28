@@ -31,6 +31,13 @@ mi-consultora/
 Esa carpeta **es** tu espacio: puedes copiarla a otro equipo o a un disco
 externo y abrirla desde allí con «Abrir carpeta…».
 
+### Varios espacios de trabajo
+
+Puedes tener tantos como quieras (por ejemplo, uno por cliente). En el menú
+del espacio → **Espacios de trabajo…** verás el actual, podrás **cambiar** a
+cualquier otro que hayas usado, **crear uno nuevo** o **abrir una carpeta**
+que ya contenga un espacio de Nodora.
+
 ### Escribir
 
 - Pulsa **+** en la barra lateral (o `Ctrl+N`) para crear una página.

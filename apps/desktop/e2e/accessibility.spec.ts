@@ -73,7 +73,11 @@ test('se puede crear y abrir una página solo con el teclado', async ({ page }) 
   await page.keyboard.press('Control+n');
   const title = page.getByRole('textbox', { name: 'Título de la página' });
   await expect(title).toBeVisible();
+  await expect(title).toHaveValue('');
   await title.click();
+  // Se espera al foco antes de teclear: sin esto la prueba es inestable
+  // porque las pulsaciones pueden llegar antes de que el campo lo reciba.
+  await expect(title).toBeFocused();
   await page.keyboard.type('Solo teclado');
   await page.keyboard.press('Enter');
   await expect(page.getByRole('navigation')).toContainText('Solo teclado');

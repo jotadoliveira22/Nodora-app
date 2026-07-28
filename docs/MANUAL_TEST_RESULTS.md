@@ -197,6 +197,18 @@ Log sin contenido de usuario ............. SÍ / NO
 
 ---
 
+### Incidencias reportadas en la beta y ya corregidas
+
+Detectadas por el propietario el 2026-07-28 usando la aplicación instalada:
+
+1. **Los menús `/` y `@` no respondían al clic del ratón** (solo al teclado).
+   Causa: la lista flotante recreaba su DOM al pasar el cursor, destruyendo
+   la fila que se iba a pulsar. Corregido y cubierto por dos pruebas nuevas
+   que usan el ratón, no Enter.
+2. **No había forma de crear ni cambiar de espacio de trabajo** una vez
+   abierto el primero. Corregido con el gestor «Espacios de trabajo…», con
+   prueba de interfaz que crea un segundo espacio y vuelve al primero.
+
 ### Funciones del MVP no cubiertas por la tanda anterior
 
 No son criterios de éxito de la spec, pero forman parte del alcance del MVP

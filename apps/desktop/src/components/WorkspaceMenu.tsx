@@ -4,6 +4,7 @@ import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialo
 import {
   Archive,
   ChevronDown,
+  LayoutGrid,
   Download,
   FolderOpen,
   Moon,
@@ -16,6 +17,7 @@ import {
 import { attachmentsApi, exportApi, workspaceApi } from '../services/api';
 import { useAppStore } from '../stores/appStore';
 import { ArchiveModal } from './ArchiveModal';
+import { WorkspaceSwitcher } from './WorkspaceSwitcher';
 import { ContextMenu, Modal, type MenuItem } from './ui';
 
 export function WorkspaceMenu() {
@@ -23,6 +25,7 @@ export function WorkspaceMenu() {
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
   const [renaming, setRenaming] = useState(false);
   const [archiveOpen, setArchiveOpen] = useState(false);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
   const [name, setName] = useState('');
   const [icon, setIcon] = useState('');
 
@@ -100,6 +103,11 @@ export function WorkspaceMenu() {
   };
 
   const items: MenuItem[] = [
+    {
+      label: 'Espacios de trabajo…',
+      icon: <LayoutGrid size={15} />,
+      onClick: () => setSwitcherOpen(true),
+    },
     {
       label: 'Renombrar espacio…',
       icon: <RefreshCcw size={15} />,
@@ -200,6 +208,7 @@ export function WorkspaceMenu() {
         </Modal>
       )}
       {archiveOpen && <ArchiveModal onClose={() => setArchiveOpen(false)} />}
+      {switcherOpen && <WorkspaceSwitcher onClose={() => setSwitcherOpen(false)} />}
     </>
   );
 }

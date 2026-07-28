@@ -4,6 +4,18 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [Unreleased]
 
+### Corregido
+- 2026-07-28 — **Los menús `/` y `@` no respondían al ratón.** La lista
+  flotante reconstruía todo su DOM al pasar el cursor por encima, incluida la
+  fila bajo el puntero: eso disparaba otro `mouseenter`, entrando en un bucle
+  que impedía que el clic llegara a completarse. Ahora las filas se crean una
+  sola vez por lista y el cambio de selección solo repinta clases.
+- 2026-07-28 — **No se podían crear ni cambiar espacios sin reinstalar.** La
+  pantalla de bienvenida solo aparecía cuando no había ningún espacio abierto,
+  así que tras el primer arranque no había forma de crear otro. Nuevo gestor
+  «Espacios de trabajo…» en el menú del espacio: crear uno nuevo, cambiar a
+  otro conocido o abrir una carpeta existente.
+
 ### Añadido
 - 2026-07-14 — **MVP funcional completo (Fase 3)**. Backend Rust/Tauri 2 con
   migraciones verificadas por checksum, workspaces portátiles, árbol de
