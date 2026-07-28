@@ -1,12 +1,15 @@
 # PROJECT_STATE.md — Nodora
 
-> Última actualización: 2026-07-27
+> Última actualización: 2026-07-28
 
 ## Estado actual
 
-**MVP completo y verificado de extremo a extremo.** Los 15 criterios de éxito
-de `docs/NODORA_SPEC.md` §16 tienen evidencia automatizada. El pipeline de CI
-pasa íntegro en Linux y en Windows, y publica el instalador NSIS.
+**MVP completo y validado también a mano: v0.1.0 aprobada como beta
+privada.** Los 15 criterios de éxito de `docs/NODORA_SPEC.md` §16 tienen
+evidencia automatizada, y 14 de ellos han sido además comprobados por una
+persona sobre la aplicación instalada en Windows
+(`docs/MANUAL_TEST_RESULTS.md`). El pipeline de CI pasa íntegro en Linux y
+en Windows, y publica el instalador NSIS.
 
 ## Entorno de desarrollo verificado
 
@@ -85,15 +88,16 @@ máximo de documento (D3), instalador sin firmar (D4), sin auto-actualización
    flujos de UI, no la persistencia real (esa la cubren las 44 pruebas de
    Rust). El contrato entre ambos lados está fijado por la prueba de
    serialización IPC.
-3. **El instalador no se ha ejecutado en una máquina Windows real** — CI
-   demuestra que se genera correctamente; la instalación efectiva depende de
-   que el propietario lo descargue y lo pruebe.
+3. **El criterio 15 (recuperación ante errores) no se ha validado a mano** —
+   está cubierto por pruebas automatizadas, pero no aparece en la tanda
+   manual de v0.1.0. Guion propuesto en `docs/MANUAL_TEST_RESULTS.md`.
 
 ## Próximo paso exacto
 
-Descargar el artefacto `nodora-windows-installer` del último run de CI e
-instalarlo en un Windows real para confirmar el criterio 1 en la práctica.
-A partir de ahí, arrancar el Horizonte 1 del roadmap.
+Cerrar la validación manual pendiente (criterio 15 y las funciones listadas
+en `docs/MANUAL_TEST_RESULTS.md`) y, en paralelo, arrancar el Horizonte 1 del
+roadmap (`docs/FUTURE_ROADMAP.md`): historial de versiones, bloques
+avanzados, vistas adicionales de bases de datos e importadores.
 
 ## Última prueba ejecutada
 
@@ -141,4 +145,7 @@ renderizado seguro de fragmentos de búsqueda).
     Rust, build del frontend, 24 pruebas de interfaz y auditoría.
   - Windows: 53 pruebas de Rust y compilación del instalador NSIS en 6 min.
 - **Artefacto publicado:** `nodora-windows-installer` (2,6 MB),
-  sha256 `4a0e5066…`. Es la evidencia del criterio de éxito nº 1.
+  sha256 `4a0e5066…`.
+- **Instalación en Windows real:** verificada por el propietario el
+  2026-07-28 (prueba manual 1), junto con otras 12 pruebas, todas
+  aprobadas. Detalle en `docs/MANUAL_TEST_RESULTS.md`.

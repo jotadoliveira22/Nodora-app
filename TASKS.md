@@ -77,3 +77,12 @@ Estados: `Pendiente` | `En progreso` | `Bloqueado` | `Terminado` | `Descartado`
 | 5.4 | Repaso de accesibilidad (WCAG AA verificado con axe-core) | Terminado |
 | 5.5 | Registrar deuda técnica (docs/TECHNICAL_DEBT.md) | Terminado |
 | 5.6 | Saldar deuda D1 (liberar adjuntos sin referencias) | Terminado |
+
+## Fase 6 — Tras la beta privada v0.1.0
+
+| # | Tarea | Estado |
+|---|---|---|
+| 6.1 | Pruebas manuales v0.1.0 (13/13 aprobadas) | Terminado |
+| 6.2 | Validar a mano el criterio 15 (recuperación ante errores) | Pendiente |
+| 6.3 | Validar a mano mover/duplicar/archivar, favoritos y liberar espacio | Pendiente |
+| 6.4 | Horizonte 1 del roadmap (historial, bloques avanzados, vistas, importadores) | Pendiente |

@@ -25,6 +25,13 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
   build) más job de empaquetado del instalador NSIS en `windows-latest`.
 
 ### Verificado
+- 2026-07-28 — **v0.1.0 aprobada como beta privada.** 13 pruebas manuales
+  sobre la aplicación instalada en Windows, todas aprobadas: instalación y
+  apertura, autosave y persistencia, apertura sin internet, crear páginas,
+  renombrar, subpáginas, búsqueda, backlinks, base de datos, adjuntos,
+  exportación, respaldo y restauración. Con ello, 14 de los 15 criterios de
+  éxito quedan verificados también a mano
+  (ver `docs/MANUAL_TEST_RESULTS.md`).
 - 2026-07-27 — **Instalador de Windows generado y publicado por CI**
   (artefacto `nodora-windows-installer`, 2,6 MB), con los dos jobs del
   pipeline en verde: Linux (lint, formato, typecheck, 53 pruebas de Rust,
