@@ -1,6 +1,6 @@
 # PROJECT_STATE.md — Nodora
 
-> Última actualización: 2026-07-28 (segunda tanda)
+> Última actualización: 2026-07-29
 
 ## Estado actual
 
@@ -75,10 +75,12 @@ migraciones SQL iniciales. ADR-000 … ADR-009 en `DECISIONS.md`.
 
 ## Deuda técnica
 
-Registrada en `docs/TECHNICAL_DEBT.md`: adjuntos no liberados (D1), títulos de
-enlaces no refrescados en vivo (D2), mensaje genérico al superar el tamaño
-máximo de documento (D3), instalador sin firmar (D4), sin auto-actualización
-(D5) y backend simulado en las pruebas de interfaz (D6).
+Registrada en `docs/TECHNICAL_DEBT.md`. **D1 (adjuntos no liberados) está
+saldada** con «Liberar espacio». Siguen abiertas: títulos de enlaces no
+refrescados en vivo (D2), mensaje genérico al superar el tamaño máximo de
+documento (D3), instalador sin firmar (D4), sin auto-actualización (D5),
+backend simulado en las pruebas de interfaz (D6) y creación de páginas y
+registros sin transacción explícita (D7).
 
 ## Riesgos activos
 
@@ -96,7 +98,9 @@ máximo de documento (D3), instalador sin firmar (D4), sin auto-actualización
 ## Próximo paso exacto
 
 Reinstalar con el artefacto que incluye los dos arreglos de la beta (menús
-con el ratón y gestor de espacios) y arrancar el Horizonte 1 del roadmap
+con el ratón y gestor de espacios): **`nodora-windows-installer` del run #20**
+(commit `dec5865`, 2,618,728 bytes, sha256 `319b95df…`, disponible hasta el
+2026-10-26). Después, arrancar el Horizonte 1 del roadmap
 (`docs/FUTURE_ROADMAP.md`): historial de versiones, bloques avanzados,
 vistas adicionales de bases de datos e importadores.
 
@@ -117,11 +121,13 @@ vistas adicionales de bases de datos e importadores.
   multilingüe extremo a extremo, límites de adjuntos, invariantes del árbol y
   seguridad del recolector de adjuntos)
 
-`pnpm --filter @nodora/desktop test:ui` (Playwright): **24 pruebas, 24
-correctas** (16 de interfaz + 8 de accesibilidad WCAG 2.1 AA) — bienvenida, creación y titulación de páginas,
-autosave, menú `/`, atajos de Markdown, enlaces `@` con backlinks, búsqueda
-Ctrl+K, archivar/restaurar, bases de datos, navegación, subpáginas, tema
-oscuro, manejo de error de guardado y validación de respaldo.
+`pnpm --filter @nodora/desktop test:ui` (Playwright): **27 pruebas, 27
+correctas** (19 de interfaz + 8 de accesibilidad WCAG 2.1 AA) — bienvenida,
+creación y titulación de páginas, autosave, menú `/` (con teclado **y con el
+ratón**), menciones `@` con el ratón, atajos de Markdown, enlaces `@` con
+backlinks, búsqueda Ctrl+K, archivar/restaurar, bases de datos, navegación,
+subpáginas, gestor de varios espacios de trabajo, tema oscuro, manejo de error
+de guardado y validación de respaldo.
 
 `pnpm -r test`: 12 pruebas correctas (10 de orden fraccionario en TS + 2 de
 renderizado seguro de fragmentos de búsqueda).
@@ -141,12 +147,15 @@ renderizado seguro de fragmentos de búsqueda).
 - **Arranque real verificado** (2026-07-14): el binario de release se ejecutó
   bajo Xvfb, permaneció vivo, creó su directorio de datos, aplicó las
   migraciones de `app.db` (schema_version = 1) y generó el `device_id`.
-- CI (run #16, commit `e0c7a92`, 2026-07-27): **ambos jobs correctos**.
+- CI (run #20, commit `dec5865`, 2026-07-28): **ambos jobs correctos** en
+  7 min 29 s.
   - Linux: lint, formato TS y Rust, typecheck, pruebas TS, 53 pruebas de
-    Rust, build del frontend, 24 pruebas de interfaz y auditoría.
-  - Windows: 53 pruebas de Rust y compilación del instalador NSIS en 6 min.
-- **Artefacto publicado:** `nodora-windows-installer` (2,6 MB),
-  sha256 `4a0e5066…`.
+    Rust, build del frontend, 27 pruebas de interfaz y auditoría.
+  - Windows: 53 pruebas de Rust y compilación del instalador NSIS.
+- **Artefacto vigente:** `nodora-windows-installer` del run #20 —
+  2,618,728 bytes, sha256 `319b95df8bcf4cfb72e042c897eb90c67c57c6de46867550cecb301c159d2ff8`,
+  disponible hasta el 2026-10-26. **Es el que incluye los dos arreglos de la
+  beta**; el instalado por el propietario (run #16, `e0c7a92`) es anterior.
 - **Instalación en Windows real:** verificada por el propietario el
   2026-07-28 (prueba manual 1), junto con otras 12 pruebas, todas
   aprobadas. Detalle en `docs/MANUAL_TEST_RESULTS.md`.

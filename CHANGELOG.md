@@ -37,6 +37,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
   build) más job de empaquetado del instalador NSIS en `windows-latest`.
 
 ### Verificado
+- 2026-07-28 — **CI en verde con los dos arreglos de la beta** (run #20,
+  commit `dec5865`): Linux (lint, formato, typecheck, 53 pruebas de Rust,
+  12 de TypeScript, 27 de interfaz y accesibilidad, build) y Windows
+  (53 pruebas de Rust + empaquetado NSIS). Instalador publicado como
+  `nodora-windows-installer`, 2,618,728 bytes,
+  sha256 `319b95df8bcf4cfb72e042c897eb90c67c57c6de46867550cecb301c159d2ff8`.
 - 2026-07-28 — **Criterio 15 (recuperación ante errores) validado a mano:**
   5 de 5 escenarios aprobados — cierre abrupto durante la edición, respaldo
   manipulado rechazado sin tocar los datos, restauración del respaldo bueno,

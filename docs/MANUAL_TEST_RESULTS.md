@@ -221,6 +221,15 @@ Detectadas por el propietario el 2026-07-28 usando la aplicación instalada:
    abierto el primero. Corregido con el gestor «Espacios de trabajo…», con
    prueba de interfaz que crea un segundo espacio y vuelve al primero.
 
+Ambos arreglos viajan en el artefacto `nodora-windows-installer` del **run
+#20** (commit `dec5865`, 2,618,728 bytes,
+sha256 `319b95df8bcf4cfb72e042c897eb90c67c57c6de46867550cecb301c159d2ff8`,
+disponible hasta el 2026-10-26). El build instalado durante las pruebas
+manuales es anterior (run #16, `e0c7a92`), así que **estas correcciones aún no
+se han comprobado sobre la aplicación instalada**: hay que reinstalar con el
+artefacto nuevo y repetir la prueba 4 (crear páginas, que usa el menú `/`) más
+una creación y cambio de espacio.
+
 ### Funciones del MVP no cubiertas por la tanda anterior
 
 No son criterios de éxito de la spec, pero forman parte del alcance del MVP

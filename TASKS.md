@@ -86,4 +86,5 @@ Estados: `Pendiente` | `En progreso` | `Bloqueado` | `Terminado` | `Descartado`
 | 6.2 | Validar a mano el criterio 15 (recuperación ante errores) — 5/5 | Terminado |
 | 6.3 | Validar a mano mover/duplicar/archivar, favoritos y liberar espacio | Pendiente |
 | 6.4 | Corregir menús con el ratón y gestor de espacios (reportados en beta) | Terminado |
-| 6.5 | Horizonte 1 del roadmap (historial, bloques avanzados, vistas, importadores) | Pendiente |
+| 6.5 | Reinstalar con el artefacto del run #20 y confirmar los dos arreglos sobre la app instalada | Pendiente |
+| 6.6 | Horizonte 1 del roadmap (historial, bloques avanzados, vistas, importadores) | Pendiente |
