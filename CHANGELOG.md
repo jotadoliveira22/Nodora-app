@@ -37,6 +37,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
   build) más job de empaquetado del instalador NSIS en `windows-latest`.
 
 ### Verificado
+- 2026-07-28 — **Criterio 15 (recuperación ante errores) validado a mano:**
+  5 de 5 escenarios aprobados — cierre abrupto durante la edición, respaldo
+  manipulado rechazado sin tocar los datos, restauración del respaldo bueno,
+  adjunto borrado a mano y carpeta del espacio movida. Con ello, los 15
+  criterios de éxito quedan verificados de forma automatizada y manual.
 - 2026-07-28 — **v0.1.0 aprobada como beta privada.** 13 pruebas manuales
   sobre la aplicación instalada en Windows, todas aprobadas: instalación y
   apertura, autosave y persistencia, apertura sin internet, crear páginas,

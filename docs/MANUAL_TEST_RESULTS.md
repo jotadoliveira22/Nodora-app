@@ -33,17 +33,29 @@ mano**. La prueba 1 es especialmente relevante porque cierra el único
 criterio que no podía demostrarse desde el entorno de desarrollo (Linux):
 que el instalador funciona en Windows de verdad.
 
-## Pendiente de validación manual
+## Criterio 15 — Recuperación ante errores (2026-07-28)
 
-### Criterio 15 — Recuperarse de errores razonables sin corromper los datos
+**Resultado: 5 de 5 escenarios aprobados.**
 
-Es el único criterio de la spec §16 que no aparece en la tanda de v0.1.0.
-Está cubierto por pruebas automatizadas, pero conviene comprobarlo en la
-aplicación real. Guion detallado abajo.
+| Escenario | Resultado |
+|---|---|
+| E1 — Cierre abrupto mientras se escribe | Aprobada |
+| E2 — Respaldo manipulado (rechazado sin tocar datos) | Aprobada |
+| E2b — Restauración del respaldo bueno | Aprobada |
+| E3 — Adjunto borrado a mano | Aprobada |
+| E4 — Carpeta del espacio movida | Aprobada |
+
+Con esto, **los 15 criterios de éxito de `docs/NODORA_SPEC.md` §16 están
+verificados por partida doble: automatizada y manual.**
+
+No consta el resultado de la comprobación opcional del registro de errores
+(que `logs/nodora.log` no contenga texto de las páginas). Sigue cubierta por
+revisión del código y por el diseño del formateador de errores, que nunca
+recibe contenido del usuario.
 
 ---
 
-## Guion: prueba del criterio 15
+## Guion empleado (reutilizable en cada versión)
 
 **Objetivo:** comprobar que Nodora aguanta cuatro fallos realistas sin perder
 ni corromper datos. Se rompen cosas **a propósito**, así que se hace sobre un

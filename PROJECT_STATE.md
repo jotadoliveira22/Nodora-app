@@ -1,14 +1,14 @@
 # PROJECT_STATE.md — Nodora
 
-> Última actualización: 2026-07-28
+> Última actualización: 2026-07-28 (segunda tanda)
 
 ## Estado actual
 
 **MVP completo y validado también a mano: v0.1.0 aprobada como beta
 privada.** Los 15 criterios de éxito de `docs/NODORA_SPEC.md` §16 tienen
-evidencia automatizada, y 14 de ellos han sido además comprobados por una
-persona sobre la aplicación instalada en Windows
-(`docs/MANUAL_TEST_RESULTS.md`). El pipeline de CI pasa íntegro en Linux y
+evidencia automatizada **y manual**: los 13 casos de la primera tanda más los
+5 escenarios de recuperación ante errores, todos aprobados sobre la
+aplicación instalada en Windows (`docs/MANUAL_TEST_RESULTS.md`). El pipeline de CI pasa íntegro en Linux y
 en Windows, y publica el instalador NSIS.
 
 ## Entorno de desarrollo verificado
@@ -88,16 +88,17 @@ máximo de documento (D3), instalador sin firmar (D4), sin auto-actualización
    flujos de UI, no la persistencia real (esa la cubren las 44 pruebas de
    Rust). El contrato entre ambos lados está fijado por la prueba de
    serialización IPC.
-3. **El criterio 15 (recuperación ante errores) no se ha validado a mano** —
-   está cubierto por pruebas automatizadas, pero no aparece en la tanda
-   manual de v0.1.0. Guion propuesto en `docs/MANUAL_TEST_RESULTS.md`.
+3. **Quedan funciones del MVP sin ejercitar a mano** — mover/duplicar,
+   archivar y eliminar, favoritos, filtros y cambio de tipo en bases de
+   datos, y «Liberar espacio». Están cubiertas por pruebas automatizadas;
+   listadas en `docs/MANUAL_TEST_RESULTS.md`.
 
 ## Próximo paso exacto
 
-Cerrar la validación manual pendiente (criterio 15 y las funciones listadas
-en `docs/MANUAL_TEST_RESULTS.md`) y, en paralelo, arrancar el Horizonte 1 del
-roadmap (`docs/FUTURE_ROADMAP.md`): historial de versiones, bloques
-avanzados, vistas adicionales de bases de datos e importadores.
+Reinstalar con el artefacto que incluye los dos arreglos de la beta (menús
+con el ratón y gestor de espacios) y arrancar el Horizonte 1 del roadmap
+(`docs/FUTURE_ROADMAP.md`): historial de versiones, bloques avanzados,
+vistas adicionales de bases de datos e importadores.
 
 ## Última prueba ejecutada
 
