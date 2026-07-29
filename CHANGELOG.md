@@ -4,7 +4,37 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [Unreleased]
 
+### Añadido
+- 2026-07-29 — **Eliminar espacios de trabajo.** Dos acciones separadas:
+  «Quitar de la lista» (no toca el disco) y «Eliminar del disco…»
+  (irreversible, exige escribir el nombre del espacio, muestra cuántas
+  páginas y cuántos MB se pierden y ofrece respaldar antes). Solo se borran
+  carpetas que contienen una base de Nodora reconocible.
+- 2026-07-29 — **Portada de página** (migración de esquema 002): ocho
+  degradados propios o una imagen del propio espacio. El recolector de
+  adjuntos pasa a contar las portadas como referencias.
+- 2026-07-29 — **Catálogo de 20 plantillas** agrupadas en consultora y
+  clientes, proyectos, notas y conocimiento, personal y otras (CRM,
+  planificador de contenidos y de clases, calendario, diario, diario de
+  trading, procedimientos, reunión grabada y panel de control). Las que
+  prometen algo que el MVP aún no hace lo advierten antes de aplicarse.
+- 2026-07-29 — **Página nueva con punto de partida**: acciones «Añadir icono»
+  y «Añadir portada» sobre el título, y una fila de arranque que desaparece
+  al escribir. El icono se elige con un selector con buscador, en lugar del
+  cuadro de texto del sistema.
+- 2026-07-29 — El panel de espacios muestra qué contiene cada espacio
+  (páginas, adjuntos y tamaño en disco).
+
 ### Corregido
+- 2026-07-29 — **El editor no se refrescaba al reemplazar el contenido desde
+  fuera.** Afectaba a la recarga tras un conflicto de versión: se recargaban
+  los datos pero el editor seguía mostrando el documento anterior. Ahora se
+  recrea de forma explícita solo en esos casos, sin perder el cursor durante
+  la edición normal.
+- 2026-07-29 — **El área de edición usaba `aria-label` sobre un `div` sin
+  rol**, un atributo ARIA prohibido: los lectores de pantalla no la
+  anunciaban. Detectado al pasar axe sobre una página vacía, que hasta ahora
+  ninguna prueba auditaba.
 - 2026-07-28 — **Los menús `/` y `@` no respondían al ratón.** La lista
   flotante reconstruía todo su DOM al pasar el cursor por encima, incluida la
   fila bajo el puntero: eso disparaba otro `mouseenter`, entrando en un bucle

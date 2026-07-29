@@ -16,11 +16,18 @@ pub struct Migration {
     pub sql: &'static str,
 }
 
-pub const WORKSPACE_MIGRATIONS: &[Migration] = &[Migration {
-    version: 1,
-    name: "init",
-    sql: include_str!("../../../../migrations/workspace/001_init.sql"),
-}];
+pub const WORKSPACE_MIGRATIONS: &[Migration] = &[
+    Migration {
+        version: 1,
+        name: "init",
+        sql: include_str!("../../../../migrations/workspace/001_init.sql"),
+    },
+    Migration {
+        version: 2,
+        name: "page_cover",
+        sql: include_str!("../../../../migrations/workspace/002_page_cover.sql"),
+    },
+];
 
 pub const APP_MIGRATIONS: &[Migration] = &[Migration {
     version: 1,

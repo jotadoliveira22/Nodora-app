@@ -1,0 +1,3177 @@
+[
+  {
+    "id": "ficha-cliente",
+    "title": "Cliente: ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "callout",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Rellena los datos y enlaza aquí las propuestas y actas con @."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Datos"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Razón social:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Sector:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Web:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Cómo llegó a nosotros:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Cliente desde:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Contactos"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Nombre — cargo — correo — teléfono"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Contexto y objetivos"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Qué necesita, qué ha probado antes y qué considera un éxito."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Servicios contratados"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Servicio — alcance — importe — periodo"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Historial"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000011"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Enlaza aquí las actas de reunión y las propuestas."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000012"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "propuesta-comercial",
+    "title": "Propuesta — ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "El problema"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "En sus palabras: qué le duele hoy y qué cuesta no resolverlo."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Lo que proponemos"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "La solución en tres frases, sin jerga."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Alcance"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Incluye:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "No incluye:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Plan de trabajo"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Fase 1 — entregable — plazo"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Fase 2 — entregable — plazo"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Inversión"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Concepto — importe"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Forma de pago:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Validez de la oferta:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000011",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Condiciones"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000012"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Plazo de entrega"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Revisiones incluidas"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Propiedad del trabajo"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "horizontalRule",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000013"
+          }
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000014"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Siguiente paso: confirmar por escrito y agendar la reunión de arranque."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000015"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "acta-reunion",
+    "title": "Acta — ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Fecha:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Asistentes:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Convoca:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Objetivo de la reunión"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003"
+          },
+          "content": []
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Temas tratados"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Acuerdos"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Próximos pasos"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué — quién — cuándo"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Temas abiertos"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000011"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000012"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "proyecto",
+    "title": "Proyecto: ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "callout",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Crea al lado la plantilla «Tareas de proyecto» y enlázala con @."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Objetivo"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Qué cambia cuando esto esté terminado."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Alcance"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Dentro:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Fuera:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Hitos"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Hito 1 — fecha"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Hito 2 — fecha"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Equipo"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Responsable:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Participantes:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Riesgos"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000011"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Riesgo — impacto — cómo lo mitigamos"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000012",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Decisiones tomadas"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000013"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Fecha — decisión — por qué"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000014"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "tareas-proyecto",
+    "title": "Tareas",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "nota-diaria",
+    "title": "Nota del día",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Las tres de hoy"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            },
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            },
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Notas"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004"
+          },
+          "content": []
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Ha surgido"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Cierre del día"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué salió bien:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué dejo para mañana:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "documento-tecnico",
+    "title": "Documento técnico: ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Estado: borrador"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Autor:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Fecha:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Contexto"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Qué problema hay que resolver y por qué ahora."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Opciones consideradas"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Opción A — a favor / en contra"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Opción B — a favor / en contra"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Decisión"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Qué se elige y por qué."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Consecuencias"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Lo que gana:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Lo que cuesta:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Difícil de revertir:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Detalle"
+            }
+          ]
+        },
+        {
+          "type": "codeBlock",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000011",
+            "language": "text"
+          },
+          "content": []
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000012"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "indice-wiki",
+    "title": "Índice: ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "De qué trata esta área y quién la mantiene."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Empezar por aquí"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Enlaza con @ las páginas de entrada."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Procedimientos"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Referencias"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Pendiente de escribir"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "semana",
+    "title": "Semana del ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Prioridades de la semana"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            },
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            },
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Lunes"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Martes"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Miércoles"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Jueves"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000011",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Viernes"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000012"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000013",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Revisión"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000014"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué avanzó:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué se atascó:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué paso a la semana que viene:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000015"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "habitos",
+    "title": "Hábitos",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "lecturas",
+    "title": "Lecturas",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "acta-grabada",
+    "title": "Reunión grabada — ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Fecha:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Asistentes:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Duración:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Enlace a la grabación:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Resumen en cinco líneas"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003"
+          },
+          "content": []
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Momentos clave"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Minuto — de qué se habló"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Acuerdos"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Tareas derivadas"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué — quién — cuándo"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Transcripción o notas literales"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000011"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Pega aquí la transcripción si la tienes."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000012"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "crm",
+    "title": "CRM",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "panel",
+    "title": "Panel: ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Estado de un vistazo"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué va bien:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué necesita atención:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Actualizado el:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Accesos rápidos"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Enlaza con @ las páginas y bases que consultas a diario."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Pendientes de esta semana"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Cifras que sigo"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Métrica — valor — fecha de la lectura"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "planificador-contenidos",
+    "title": "Contenidos",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "planificador-clases",
+    "title": "Clase: ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Asignatura:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Grupo:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Fecha:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Duración:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Objetivos de aprendizaje"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Al terminar, el alumnado sabrá…"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Materiales"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Desarrollo"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Apertura (5 min):"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Desarrollo (30 min):"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Cierre (10 min):"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Evaluación"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué se observa y cómo se registra."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Después de la clase"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000011"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué funcionó:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Qué cambiar la próxima vez:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000012"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "calendario",
+    "title": "Calendario",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "journal",
+    "title": "Diario — ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Fecha:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Ánimo (1-5):"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Energía (1-5):"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Qué ha pasado hoy"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003"
+          },
+          "content": []
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Qué he sentido"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005"
+          },
+          "content": []
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Tres cosas que agradezco"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Qué me llevo"
+            }
+          ]
+        },
+        {
+          "type": "blockquote",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Una frase que resuma el día."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "trading-journal",
+    "title": "Operaciones",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "procedimiento",
+    "title": "Cómo: ",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000001"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Responsable:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Frecuencia:"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Última revisión:"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000002",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Cuándo se usa"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000003"
+          },
+          "content": []
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000004",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Antes de empezar"
+            }
+          ]
+        },
+        {
+          "type": "taskList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000005"
+          },
+          "content": [
+            {
+              "type": "taskItem",
+              "attrs": {
+                "checked": false
+              },
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Lo que hay que tener a mano"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000006",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Pasos"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000007"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "1."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "2."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "3."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000008",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Errores comunes"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000009"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Síntoma — causa — solución"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000010",
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Cómo saber que salió bien"
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000011"
+          },
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "blockId": "00000000-0000-4000-8000-000000000012"
+          },
+          "content": []
+        }
+      ]
+    }
+  }
+]

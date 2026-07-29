@@ -88,3 +88,14 @@ Estados: `Pendiente` | `En progreso` | `Bloqueado` | `Terminado` | `Descartado`
 | 6.4 | Corregir menús con el ratón y gestor de espacios (reportados en beta) | Terminado |
 | 6.5 | Reinstalar con el artefacto del run #20 y confirmar los dos arreglos sobre la app instalada | Pendiente |
 | 6.6 | Horizonte 1 del roadmap (historial, bloques avanzados, vistas, importadores) | Pendiente |
+
+## Fase 7 — Mejoras de experiencia (docs/UX_IMPROVEMENTS_PLAN.md)
+
+| # | Tarea | Estado |
+|---|---|---|
+| 7.1 | Eliminar espacios de trabajo, con salvaguardas | Terminado |
+| 7.2 | Panel del espacio con contenido y acciones por fila | Terminado |
+| 7.3 | Portada de página (migración 002) y selector de emoji | Terminado |
+| 7.4 | Página nueva con acciones de cabecera y punto de partida | Terminado |
+| 7.5 | Catálogo de plantillas verificado de extremo a extremo | Terminado |
+| 7.6 | Comprobar las mejoras a mano sobre la aplicación instalada | Pendiente |

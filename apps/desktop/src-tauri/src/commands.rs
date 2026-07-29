@@ -267,6 +267,25 @@ pub fn set_page_icon(
 }
 
 #[tauri::command]
+pub fn set_page_cover(
+    state: State<'_, AppState>,
+    id: String,
+    kind: Option<String>,
+    value: Option<String>,
+) -> Result<SaveResult> {
+    state.with_ws(|ws| {
+        pages::set_page_cover(&ws.conn, &ws.ctx, &id, kind.as_deref(), value.as_deref())
+    })
+}
+
+/// Colores de portada disponibles; el frontend los pinta con sus propios
+/// degradados, así que aquí solo viajan los identificadores.
+#[tauri::command]
+pub fn list_cover_presets() -> Vec<&'static str> {
+    pages::COVER_PRESETS.to_vec()
+}
+
+#[tauri::command]
 pub fn save_page_content(
     state: State<'_, AppState>,
     id: String,

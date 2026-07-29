@@ -65,6 +65,9 @@ export const pagesApi = {
     call<{ version: number; updatedAt: string }>('rename_page', { id, title }),
   setIcon: (id: string, icon: string | null) =>
     call<{ version: number; updatedAt: string }>('set_page_icon', { id, icon }),
+  setCover: (id: string, kind: string | null, value: string | null) =>
+    call<{ version: number; updatedAt: string }>('set_page_cover', { id, kind, value }),
+  coverPresets: () => call<string[]>('list_cover_presets'),
   saveContent: (id: string, contentJson: string, baseVersion: number) =>
     call<{ version: number; updatedAt: string }>('save_page_content', {
       id,

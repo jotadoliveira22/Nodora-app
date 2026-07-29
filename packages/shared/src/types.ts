@@ -51,6 +51,9 @@ export interface PageDetail {
   archivedAt: string | null;
   /** Documento del editor serializado (árbol ProseMirror JSON). */
   contentJson: string;
+  /** Portada: null, 'color' (preset) o 'attachment' (imagen del espacio). */
+  coverKind: string | null;
+  coverValue: string | null;
   version: number;
   updatedAt: string;
 }

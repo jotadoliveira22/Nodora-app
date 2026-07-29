@@ -50,7 +50,12 @@ fn migrations_are_idempotent_and_checksummed() {
     drop(c1);
     // Reabrir no re-aplica nada y verifica checksums.
     let c2 = db::open_with_migrations(&db_path, db::WORKSPACE_MIGRATIONS).unwrap();
-    assert_eq!(db::schema_version(&c2).unwrap(), 1);
+    let ultima = db::WORKSPACE_MIGRATIONS
+        .iter()
+        .map(|m| m.version)
+        .max()
+        .unwrap();
+    assert_eq!(db::schema_version(&c2).unwrap(), ultima);
     drop(c2);
     // Checksum manipulado -> se niega a abrir.
     let c = rusqlite::Connection::open(&db_path).unwrap();

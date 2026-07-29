@@ -1,8 +1,20 @@
 /** Vista de página: título, editor con autosave, breadcrumbs y backlinks. */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
-import { ArrowLeft, ArrowRight, Check, Download, MoreHorizontal, Star } from 'lucide-react';
-import type { PageDetail } from '@nodora/shared';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Download,
+  FileText,
+  Image as ImageIcon,
+  LayoutTemplate,
+  MoreHorizontal,
+  Smile,
+  Star,
+  Table,
+} from 'lucide-react';
+import { templateById, type PageDetail } from '@nodora/shared';
 import {
   NodoraEditor,
   type EditorDocJson,
@@ -11,10 +23,14 @@ import {
 } from '@nodora/editor';
 
 import { attachmentsApi, exportApi, isApiError, pagesApi } from '../services/api';
+import { applyTemplate } from '../services/templates';
 import { useAppStore } from '../stores/appStore';
 import { ContextMenu, type MenuItem } from './ui';
 import { DatabaseView } from './DatabaseView';
+import { EmojiPicker } from './EmojiPicker';
+import { CoverPicker, PageCover } from './PageCover';
 import { RecordProperties } from './RecordProperties';
+import { TemplatePicker } from './TemplatePicker';
 
 const SAVE_DEBOUNCE_MS = 800;
 
@@ -54,6 +70,11 @@ export function PageView({ pageId }: { pageId: string }) {
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
   const [titleDraft, setTitleDraft] = useState('');
+  const [iconPicker, setIconPicker] = useState(false);
+  const [coverPicker, setCoverPicker] = useState(false);
+  const [templatePicker, setTemplatePicker] = useState(false);
+  /** Cambia solo cuando el documento se reemplaza desde fuera del editor. */
+  const [docEpoch, setDocEpoch] = useState(0);
 
   // Estado de guardado (refs para evitar renders en cada tecla).
   const baseVersion = useRef(0);
@@ -68,25 +89,38 @@ export function PageView({ pageId }: { pageId: string }) {
     return m;
   }, [pages]);
 
-  const load = useCallback(async () => {
-    try {
-      const detail = await pagesApi.get(pageId);
-      baseVersion.current = detail.version;
-      dirty.current = null;
-      setPage(detail);
-      setTitleDraft(detail.title);
-      setSaveStatus('idle');
-      const [bc, bl] = await Promise.all([
-        pagesApi.breadcrumbs(pageId),
-        pagesApi.backlinks(pageId),
-      ]);
-      setCrumbs(bc);
-      setBacklinks(bl);
-    } catch (e) {
-      notifyError(e, 'No se pudo abrir la página');
-      setPage(null);
-    }
-  }, [pageId, notifyError, setSaveStatus]);
+  /**
+   * Recarga la página. `replaceEditor` fuerza a recrear el editor porque el
+   * contenido cambió por debajo (plantilla aplicada, recarga tras conflicto):
+   * sin eso el editor seguiría mostrando el documento anterior, ya obsoleto.
+   * No se hace siempre porque recrearlo pierde el cursor y el historial.
+   */
+  const load = useCallback(
+    async (replaceEditor = false) => {
+      try {
+        const detail = await pagesApi.get(pageId);
+        baseVersion.current = detail.version;
+        dirty.current = null;
+        setPage(detail);
+        // El contador sube junto al contenido nuevo, no antes: hacerlo antes
+        // recreaba el editor con el documento anterior, que era justo el que
+        // se quería descartar.
+        if (replaceEditor) setDocEpoch((n) => n + 1);
+        setTitleDraft(detail.title);
+        setSaveStatus('idle');
+        const [bc, bl] = await Promise.all([
+          pagesApi.breadcrumbs(pageId),
+          pagesApi.backlinks(pageId),
+        ]);
+        setCrumbs(bc);
+        setBacklinks(bl);
+      } catch (e) {
+        notifyError(e, 'No se pudo abrir la página');
+        setPage(null);
+      }
+    },
+    [pageId, notifyError, setSaveStatus],
+  );
 
   useEffect(() => {
     void load();
@@ -110,7 +144,8 @@ export function PageView({ pageId }: { pageId: string }) {
     } catch (e) {
       if (isApiError(e) && e.code === 'VERSION_CONFLICT') {
         toast('El contenido cambió fuera de esta vista; recargando…', 'error');
-        await load();
+        // Se recrea el editor: el documento en pantalla ya no es el guardado.
+        await load(true);
       } else {
         // El trabajo local no se pierde: se reintenta en el próximo cambio.
         dirty.current = getDoc;
@@ -167,6 +202,83 @@ export function PageView({ pageId }: { pageId: string }) {
       notifyError(e, 'No se pudo renombrar');
     }
   }, [page, titleDraft, refreshTree, notifyError]);
+
+  /** Aplica el resultado de una escritura sobre la página sin recargarla. */
+  const adoptar = useCallback(
+    (cambios: Partial<PageDetail> & { version: number }) => {
+      baseVersion.current = cambios.version;
+      setPage((p) => (p ? { ...p, ...cambios } : p));
+      if (cambios.icon !== undefined || cambios.title !== undefined) {
+        setCrumbs((cs) =>
+          cs.map((c) =>
+            c.id === pageId
+              ? {
+                  ...c,
+                  ...(cambios.icon !== undefined ? { icon: cambios.icon } : {}),
+                  ...(cambios.title !== undefined ? { title: cambios.title } : {}),
+                }
+              : c,
+          ),
+        );
+      }
+    },
+    [pageId],
+  );
+
+  const cambiarIcono = useCallback(
+    async (icon: string | null) => {
+      setIconPicker(false);
+      try {
+        const res = await pagesApi.setIcon(pageId, icon);
+        adoptar({ icon, version: res.version });
+        await refreshTree();
+      } catch (e) {
+        notifyError(e, 'No se pudo cambiar el icono');
+      }
+    },
+    [pageId, adoptar, refreshTree, notifyError],
+  );
+
+  const cambiarPortada = useCallback(
+    async (kind: string | null, value: string | null) => {
+      setCoverPicker(false);
+      try {
+        const res = await pagesApi.setCover(pageId, kind, value);
+        adoptar({ coverKind: kind, coverValue: value, version: res.version });
+      } catch (e) {
+        notifyError(e, 'No se pudo cambiar la portada');
+      }
+    },
+    [pageId, adoptar, notifyError],
+  );
+
+  const usarPlantilla = useCallback(
+    async (template: Parameters<typeof applyTemplate>[1]) => {
+      setTemplatePicker(false);
+      // Cualquier cambio pendiente se guarda antes: la plantilla escribe sobre
+      // la misma página y un autosave posterior chocaría con su versión.
+      if (timer.current) window.clearTimeout(timer.current);
+      await persist();
+      try {
+        const res = await applyTemplate(pageId, template, baseVersion.current);
+        if (res.isDatabase) {
+          // La plantilla creó una base de datos como página hija: se abre.
+          await refreshTree();
+          const creada = useAppStore.getState().pages.find((p) => p.title === res.title);
+          if (creada) await navigate(creada.id);
+          toast(`Plantilla «${template.name}» aplicada`);
+          return;
+        }
+        await load(true);
+        await refreshTree();
+        setTitleDraft(res.title);
+        toast(`Plantilla «${template.name}» aplicada`);
+      } catch (e) {
+        notifyError(e, 'No se pudo aplicar la plantilla');
+      }
+    },
+    [pageId, persist, load, refreshTree, navigate, toast, notifyError],
+  );
 
   const host: EditorHostCallbacks = useMemo(
     () => ({
@@ -239,22 +351,21 @@ export function PageView({ pageId }: { pageId: string }) {
       onClick: () => void exportMd(true),
     },
     { label: '', separator: true },
+    { label: '', separator: true },
     {
       label: 'Cambiar icono…',
-      onClick: () => {
-        const icon = window.prompt('Emoji para la página (vacío para quitar):', page?.icon ?? '');
-        if (icon === null || !page) return;
-        void pagesApi
-          .setIcon(page.id, icon.trim() || null)
-          .then(async (res) => {
-            const next = icon.trim() || null;
-            baseVersion.current = res.version;
-            setPage({ ...page, icon: next, version: res.version });
-            setCrumbs((cs) => cs.map((c) => (c.id === page.id ? { ...c, icon: next } : c)));
-            await refreshTree();
-          })
-          .catch((e) => notifyError(e, 'No se pudo cambiar el icono'));
-      },
+      icon: <Smile size={15} />,
+      onClick: () => setIconPicker(true),
+    },
+    {
+      label: page?.coverKind ? 'Cambiar portada…' : 'Añadir portada…',
+      icon: <ImageIcon size={15} />,
+      onClick: () => setCoverPicker(true),
+    },
+    {
+      label: 'Aplicar una plantilla…',
+      icon: <LayoutTemplate size={15} />,
+      onClick: () => setTemplatePicker(true),
     },
   ];
 
@@ -267,6 +378,10 @@ export function PageView({ pageId }: { pageId: string }) {
   }
 
   const initialDoc = JSON.parse(page.contentJson) as EditorDocJson;
+  // Una página está «vacía» cuando no tiene ni título ni bloques con texto.
+  // Es el momento en que ofrecer un punto de partida ayuda; después estorba.
+  const vacia =
+    page.kind === 'page' && !titleDraft.trim() && !JSON.stringify(initialDoc).includes('"text"');
 
   return (
     <div className="nd-main">
@@ -325,13 +440,35 @@ export function PageView({ pageId }: { pageId: string }) {
       </div>
 
       <div className="nd-content">
+        <PageCover
+          kind={page.coverKind}
+          value={page.coverValue}
+          onEdit={() => setCoverPicker(true)}
+        />
         <div className="nd-page-body">
+          {/* Acciones de cabecera: siempre visibles mientras la página está
+              vacía, y al pasar el cursor cuando ya tiene contenido. */}
+          <div className={`nd-page-actions${vacia ? ' nd-page-actions--always' : ''}`}>
+            {!page.icon && (
+              <button className="nd-page-action" onClick={() => setIconPicker(true)}>
+                <Smile size={14} /> Añadir icono
+              </button>
+            )}
+            {!page.coverKind && (
+              <button className="nd-page-action" onClick={() => setCoverPicker(true)}>
+                <ImageIcon size={14} /> Añadir portada
+              </button>
+            )}
+            <button className="nd-page-action" onClick={() => setTemplatePicker(true)}>
+              <LayoutTemplate size={14} /> Usar plantilla
+            </button>
+          </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
             {page.icon && (
               <button
                 className="nd-page-icon-btn"
                 aria-label="Icono de página"
-                onClick={() => pageMenu[3]?.onClick?.()}
+                onClick={() => setIconPicker(true)}
               >
                 {page.icon}
               </button>
@@ -361,7 +498,7 @@ export function PageView({ pageId }: { pageId: string }) {
             <DatabaseView pageId={page.id} />
           ) : (
             <NodoraEditor
-              docKey={page.id}
+              docKey={`${page.id}:${docEpoch}`}
               initialDoc={initialDoc}
               host={host}
               onDocChanged={onDocChanged}
@@ -369,6 +506,33 @@ export function PageView({ pageId }: { pageId: string }) {
                 editorRef.current = ed;
               }}
             />
+          )}
+
+          {vacia && (
+            <div className="nd-starter" aria-label="Punto de partida">
+              <span className="nd-starter-label">Empieza por aquí</span>
+              <button className="nd-starter-btn" onClick={() => setTemplatePicker(true)}>
+                <LayoutTemplate size={14} /> Elegir plantilla
+              </button>
+              <button
+                className="nd-starter-btn"
+                onClick={() => void usarPlantilla(templateById('tareas-proyecto')!)}
+              >
+                <Table size={14} /> Base de datos de tareas
+              </button>
+              <button
+                className="nd-starter-btn"
+                onClick={() => void usarPlantilla(templateById('acta-reunion')!)}
+              >
+                <FileText size={14} /> Acta de reunión
+              </button>
+              <button
+                className="nd-starter-btn"
+                onClick={() => editorRef.current?.commands.focus('start')}
+              >
+                Página en blanco
+              </button>
+            </div>
           )}
 
           {backlinks.length > 0 && (
@@ -389,6 +553,26 @@ export function PageView({ pageId }: { pageId: string }) {
         </div>
       </div>
       {menu && <ContextMenu x={menu.x} y={menu.y} items={pageMenu} onClose={() => setMenu(null)} />}
+      {iconPicker && (
+        <EmojiPicker
+          current={page.icon}
+          onPick={(emoji) => void cambiarIcono(emoji)}
+          onClose={() => setIconPicker(false)}
+        />
+      )}
+      {coverPicker && (
+        <CoverPicker
+          onPick={(kind, value) => void cambiarPortada(kind, value)}
+          onRemove={() => void cambiarPortada(null, null)}
+          onClose={() => setCoverPicker(false)}
+        />
+      )}
+      {templatePicker && (
+        <TemplatePicker
+          onPick={(t) => void usarPlantilla(t)}
+          onClose={() => setTemplatePicker(false)}
+        />
+      )}
     </div>
   );
 }

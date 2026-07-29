@@ -120,7 +120,12 @@ export function NodoraEditor({
       editable,
       editorProps: {
         attributes: {
-          // El área de edición es un textbox ARIA: necesita nombre accesible.
+          // El área de edición es un textbox ARIA: necesita rol y nombre
+          // accesible. Sin el rol explícito, `aria-label` sobre un div es un
+          // atributo prohibido y el lector de pantalla no anuncia el área
+          // (detectado por axe en `e2e/accessibility.spec.ts`).
+          role: 'textbox',
+          'aria-multiline': 'true',
           'aria-label': 'Contenido de la página',
         },
       },

@@ -34,13 +34,26 @@ externo y abrirla desde allí con «Abrir carpeta…».
 ### Varios espacios de trabajo
 
 Puedes tener tantos como quieras (por ejemplo, uno por cliente). En el menú
-del espacio → **Espacios de trabajo…** verás el actual, podrás **cambiar** a
-cualquier otro que hayas usado, **crear uno nuevo** o **abrir una carpeta**
-que ya contenga un espacio de Nodora.
+del espacio → **Espacios de trabajo…** verás cada uno con lo que contiene
+(páginas, adjuntos y tamaño en disco), y podrás **cambiar** a cualquiera,
+**crear uno nuevo** o **abrir una carpeta** que ya contenga un espacio.
+
+Cada fila tiene un menú **⋯** con dos formas distintas de quitarlo de en medio:
+
+- **Quitar de la lista** — deja de aparecer, pero **no toca el disco**. Sus
+  datos siguen ahí y lo recuperas con «Abrir carpeta…».
+- **Eliminar del disco…** — borra la carpeta entera: base de datos, adjuntos y
+  los respaldos que guardes dentro. **No se puede deshacer**, así que Nodora
+  te dice cuántas páginas y cuántos MB vas a perder, te ofrece crear un
+  respaldo antes y te pide escribir el nombre del espacio para confirmarlo. No
+  puedes eliminar el espacio que tienes abierto: cambia a otro primero.
 
 ### Escribir
 
 - Pulsa **+** en la barra lateral (o `Ctrl+N`) para crear una página.
+- Una página recién creada te ofrece **Añadir icono**, **Añadir portada** y
+  **Usar plantilla** sobre el título, y una fila de puntos de partida al pie
+  que desaparece en cuanto escribes algo.
 - Escribe el título y pulsa `Enter` para bajar al contenido.
 - Dentro del contenido, escribe `/` para abrir el menú de bloques: texto,
   encabezados, listas, tareas, citas, código, separadores, callouts,
@@ -89,6 +102,28 @@ Tendrá una vista de tabla con una columna «Título».
   ofrece conversiones seguras.
 - El icono ⤢ de cada fila abre el registro como una página completa, con sus
   propiedades arriba y espacio libre para escribir debajo.
+
+### Plantillas
+
+En una página vacía, **Usar plantilla** (o ⋯ → **Aplicar una plantilla…**)
+abre el catálogo, agrupado por temas: consultora y clientes, proyectos, notas
+y conocimiento, personal y otras. Unas rellenan la página con su estructura;
+otras crean una base de datos con sus columnas ya definidas (tareas, CRM,
+contenidos, calendario, hábitos, lecturas, operaciones).
+
+Cuatro plantillas llevan un aviso porque su nombre promete más de lo que esta
+versión hace: **Reunión grabada** (Nodora no graba ni transcribe; guarda el
+enlace a tu grabación), **Panel de control** (aún no hay fórmulas ni
+gráficos), **Calendario** (la vista de calendario llegará más adelante; de
+momento es una tabla) y **Diario de trading** (los importes se anotan a mano,
+no hay cotizaciones). El aviso aparece antes de aplicarlas.
+
+### Icono y portada
+
+El icono se elige desde un selector con buscador. La portada puede ser uno de
+los ocho degradados de Nodora o una imagen tuya: la imagen se copia dentro de
+la carpeta del espacio, así que sigue funcionando sin conexión y viaja con tus
+respaldos. Para quitarla, entra en la portada → **Quitar portada**.
 
 ### Imágenes
 
@@ -172,6 +207,10 @@ guardado automático. Nunca queda a medias.
   bases.
 - Editor: sin tablas, columnas ni bloques desplegables (previstos para la
   siguiente versión).
+- Al instalar esta versión sobre un espacio creado con la anterior, la base se
+  actualiza para admitir portadas. **Después de eso, una versión anterior de
+  Nodora ya no podrá abrir ese espacio**: crea un respaldo antes de
+  actualizar.
 - Sin importadores desde otras herramientas.
 - Al renombrar una página, los enlaces que apuntan a ella y que estén en la
   página abierta siguen mostrando el nombre anterior hasta que navegues fuera

@@ -111,3 +111,33 @@ test('el estado de guardado se anuncia a los lectores de pantalla', async ({ pag
   await expect(page.locator('.nd-save-status')).toHaveAttribute('aria-live', 'polite');
   await expect(page.locator('.nd-toast-wrap, [aria-live="polite"]').first()).toBeAttached();
 });
+
+test('los diálogos de icono, portada y plantillas cumplen WCAG AA', async ({ page }) => {
+  await createWorkspace(page);
+  await page.keyboard.press('Control+n');
+  await expect(page.getByRole('textbox', { name: 'Título de la página' })).toBeVisible();
+
+  for (const [boton, dialogo] of [
+    ['Añadir icono', 'Elegir un icono'],
+    ['Añadir portada', 'Portada de la página'],
+    ['Usar plantilla', 'Elegir una plantilla'],
+  ] as const) {
+    await page.getByRole('button', { name: boton }).click();
+    await expect(page.getByRole('dialog', { name: dialogo })).toBeVisible();
+    const { violations } = await analyze(page);
+    expect(violations, `${dialogo}: ${describe(violations)}`).toEqual([]);
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog', { name: dialogo })).toBeHidden();
+  }
+});
+
+test('una página con portada sigue cumpliendo WCAG AA', async ({ page }) => {
+  await createWorkspace(page);
+  await page.keyboard.press('Control+n');
+  await page.getByRole('button', { name: 'Añadir portada' }).click();
+  await page.getByRole('button', { name: 'Portada Tinta' }).click();
+  await expect(page.locator('.nd-page-cover')).toBeVisible();
+
+  const { violations } = await analyze(page);
+  expect(violations, describe(violations)).toEqual([]);
+});

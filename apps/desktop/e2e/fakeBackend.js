@@ -59,6 +59,8 @@
       databaseId,
       archivedAt: null,
       contentJson: JSON.stringify({ type: 'doc', content: [] }),
+      coverKind: null,
+      coverValue: null,
       version: 1,
       updatedAt: now(),
     };
@@ -76,6 +78,8 @@
       databaseId: p.databaseId,
       archivedAt: p.archivedAt,
       contentJson: p.contentJson,
+      coverKind: p.coverKind ?? null,
+      coverValue: p.coverValue ?? null,
       version: p.version,
       updatedAt: p.updatedAt,
     };
@@ -186,6 +190,24 @@
       p.updatedAt = now();
       return { version: p.version, updatedAt: p.updatedAt };
     },
+    set_page_cover: ({ id, kind, value }) => {
+      const p = state.pages.get(id);
+      p.coverKind = kind;
+      p.coverValue = kind ? value : null;
+      p.version += 1;
+      p.updatedAt = now();
+      return { version: p.version, updatedAt: p.updatedAt };
+    },
+    list_cover_presets: () => [
+      'arena',
+      'salvia',
+      'niebla',
+      'tinta',
+      'cobre',
+      'musgo',
+      'ciruela',
+      'brasa',
+    ],
     save_page_content: ({ id, contentJson, baseVersion }) => {
       const p = state.pages.get(id);
       if (!p) err('PAGE_NOT_FOUND', 'La página no existe');

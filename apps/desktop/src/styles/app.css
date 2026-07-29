@@ -900,3 +900,198 @@ textarea {
   border-radius: var(--nd-radius-sm);
   font-size: 13px;
 }
+
+/* ---- Portada de página ---------------------------------------------------
+   Degradados propios resueltos en CSS: sin imágenes empaquetadas, sin
+   descargas y con variantes que funcionan en tema claro y oscuro. */
+.nd-page-cover {
+  position: relative;
+  height: 180px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.nd-cover-edit {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: var(--nd-radius-sm);
+  background: var(--nd-bg);
+  color: var(--nd-text);
+  border: 1px solid var(--nd-border);
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.nd-page-cover:hover .nd-cover-edit,
+.nd-cover-edit:focus-visible {
+  opacity: 1;
+}
+
+.nd-cover-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.nd-cover-swatch {
+  height: 48px;
+  border-radius: var(--nd-radius-sm);
+  border: 1px solid var(--nd-border);
+}
+
+.nd-cover--arena {
+  background: linear-gradient(120deg, #e8d9c0, #c9a97e);
+}
+.nd-cover--salvia {
+  background: linear-gradient(120deg, #cfded0, #8fae95);
+}
+.nd-cover--niebla {
+  background: linear-gradient(120deg, #dfe4ea, #a7b1bd);
+}
+.nd-cover--tinta {
+  background: linear-gradient(120deg, #4a5670, #232a3b);
+}
+.nd-cover--cobre {
+  background: linear-gradient(120deg, #e3b08a, #b06a3f);
+}
+.nd-cover--musgo {
+  background: linear-gradient(120deg, #b9c9a3, #6f8455);
+}
+.nd-cover--ciruela {
+  background: linear-gradient(120deg, #d3bcd6, #7d5885);
+}
+.nd-cover--brasa {
+  background: linear-gradient(120deg, #edb9a6, #b4553a);
+}
+
+/* ---- Acciones de cabecera de página -------------------------------------- */
+.nd-page-actions {
+  display: flex;
+  gap: 4px;
+  min-height: 26px;
+  margin-bottom: 4px;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+/* Mientras la página está vacía se quedan a la vista: es cuando hacen falta. */
+.nd-page-actions--always,
+.nd-page-body:hover .nd-page-actions,
+.nd-page-actions:focus-within {
+  opacity: 1;
+}
+
+.nd-page-action {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  font-size: 13px;
+  border-radius: var(--nd-radius-sm);
+  color: var(--nd-text-muted);
+}
+
+.nd-page-action:hover {
+  background: var(--nd-accent-soft);
+  color: var(--nd-text);
+}
+
+/* ---- Punto de partida de una página vacía -------------------------------- */
+.nd-starter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--nd-border);
+}
+
+.nd-starter-label {
+  font-size: 12px;
+  color: var(--nd-text-muted);
+  width: 100%;
+}
+
+.nd-starter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  border: 1px solid var(--nd-border);
+  border-radius: var(--nd-radius-md);
+  color: var(--nd-text);
+}
+
+.nd-starter-btn:hover {
+  background: var(--nd-accent-soft);
+}
+
+/* ---- Selector de plantillas ---------------------------------------------- */
+.nd-template-list {
+  max-height: 320px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.nd-template-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  text-align: left;
+  border-radius: var(--nd-radius-md);
+  border: 1px solid transparent;
+}
+
+.nd-template-item:hover {
+  background: var(--nd-accent-soft);
+}
+
+.nd-template-item--active {
+  border-color: var(--nd-accent);
+  background: var(--nd-accent-soft);
+}
+
+.nd-template-icon {
+  font-size: 20px;
+  width: 28px;
+  text-align: center;
+}
+
+.nd-template-tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--nd-border);
+  color: var(--nd-text-muted);
+}
+
+/* ---- Selector de emoji ---------------------------------------------------- */
+.nd-emoji-groups {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-top: 6px;
+}
+
+.nd-emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2px;
+}
+
+.nd-emoji-btn {
+  font-size: 20px;
+  line-height: 1;
+  padding: 5px;
+  border-radius: var(--nd-radius-sm);
+}
+
+.nd-emoji-btn:hover {
+  background: var(--nd-accent-soft);
+}

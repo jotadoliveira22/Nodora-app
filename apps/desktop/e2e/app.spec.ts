@@ -486,3 +486,67 @@ test('el espacio abierto no se puede eliminar del disco', async ({ page }) => {
   await expect(confirmar).toContainText('es el espacio abierto ahora mismo');
   await expect(confirmar.getByRole('button', { name: /Eliminar definitivamente/ })).toBeDisabled();
 });
+
+test('una página nueva ofrece icono, portada y un punto de partida', async ({ page }) => {
+  await createWorkspace(page);
+  await page.keyboard.press('Control+n');
+  await expect(page.getByRole('textbox', { name: 'Título de la página' })).toHaveValue('');
+
+  // Con la página vacía, las acciones de cabecera están a la vista.
+  await expect(page.getByRole('button', { name: 'Añadir icono' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Añadir portada' })).toBeVisible();
+  await expect(page.getByLabel('Punto de partida')).toBeVisible();
+
+  // El icono se elige desde el selector, no escribiendo un emoji a ciegas.
+  await page.getByRole('button', { name: 'Añadir icono' }).click();
+  const emojis = page.getByRole('dialog', { name: 'Elegir un icono' });
+  await expect(emojis).toBeVisible();
+  await emojis.getByRole('button', { name: 'Icono 🚀' }).click();
+  await expect(page.getByRole('button', { name: 'Icono de página' })).toHaveText('🚀');
+
+  // La portada de color se aplica y queda visible.
+  await page.getByRole('button', { name: 'Añadir portada' }).click();
+  const portada = page.getByRole('dialog', { name: 'Portada de la página' });
+  await portada.getByRole('button', { name: 'Portada Salvia' }).click();
+  await expect(page.locator('.nd-page-cover.nd-cover--salvia')).toBeVisible();
+});
+
+test('una plantilla de contenido rellena la página y avisa de sus límites', async ({ page }) => {
+  await createWorkspace(page);
+  await page.keyboard.press('Control+n');
+  await page.getByRole('button', { name: 'Elegir plantilla' }).click();
+
+  const picker = page.getByRole('dialog', { name: 'Elegir una plantilla' });
+  await expect(picker).toBeVisible();
+
+  // La advertencia solo aparece en las plantillas que la declaran.
+  await picker.getByRole('button', { name: /Acta de reunión/ }).click();
+  await expect(picker.getByRole('note')).toBeHidden();
+  await picker.getByRole('button', { name: /Reunión grabada/ }).click();
+  await expect(picker.getByRole('note')).toContainText('no graba ni transcribe');
+
+  // Se aplica la de acta: título, icono y contenido.
+  await picker.getByPlaceholder('Buscar plantilla…').fill('acta');
+  await picker.getByRole('button', { name: /Acta de reunión/ }).click();
+  await picker.getByRole('button', { name: 'Usar plantilla' }).click();
+
+  await expect(picker).toBeHidden();
+  await expect(page.getByRole('textbox', { name: 'Título de la página' })).toHaveValue('Acta —');
+  await expect(page.locator('.nd-editor .tiptap')).toContainText('Acuerdos');
+  await expect(page.locator('.nd-editor .tiptap')).toContainText('Próximos pasos');
+  await expect(page.locator('.nd-toast').first()).toContainText('Acta de reunión');
+
+  // Y con contenido ya no se ofrece el punto de partida.
+  await expect(page.getByLabel('Punto de partida')).toBeHidden();
+});
+
+test('una plantilla de base de datos crea la tabla con sus columnas', async ({ page }) => {
+  await createWorkspace(page);
+  await page.keyboard.press('Control+n');
+  await page.getByRole('button', { name: 'Base de datos de tareas' }).click();
+
+  await expect(page.locator('.nd-db-table')).toBeVisible();
+  for (const columna of ['Estado', 'Prioridad', 'Responsable', 'Fecha límite']) {
+    await expect(page.locator('.nd-db-table')).toContainText(columna);
+  }
+});

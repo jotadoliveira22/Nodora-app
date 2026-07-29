@@ -162,3 +162,62 @@ posibilidad de reversión.
   breadcrumbs desactualizados tras renombrar y cuatro violaciones de WCAG AA
   (contraste del texto secundario y del acento en tema oscuro, editor sin
   nombre accesible y estructura ARIA inválida del árbol).
+
+## ADR-011 — La portada de página es una columna, no un bloque
+
+- **Fecha:** 2026-07-29
+- **Estado:** aceptada
+- **Contexto:** el propietario pide que una página nueva ofrezca poner icono y
+  portada. La portada necesita persistirse en algún sitio.
+- **Opciones:** (a) columnas nuevas en `pages`; (b) guardarla dentro de
+  `workspaces.settings_json` o de un JSON por página; (c) representarla como un
+  bloque del documento.
+- **Decisión:** (a), migración `002_page_cover.sql` con `cover_kind` y
+  `cover_value`, ambas anulables.
+- **Razón:** la portada es un atributo de la página, no contenido. Como bloque
+  (c) aparecería en las exportaciones a Markdown, entraría en el índice de
+  búsqueda y complicaría el validador. Dentro de un JSON opaco (b) no se puede
+  consultar ni migrar con garantías, y el recolector de adjuntos no podría
+  saber si una imagen sigue en uso.
+- **Consecuencias:**
+  - Es la decisión **más difícil de revertir** de esta tanda: una base migrada
+    a la versión 2 ya no la abre una versión anterior de Nodora, porque el
+    arranque rechaza esquemas más nuevos por diseño. Conviene respaldar antes
+    de actualizar.
+  - El recolector de adjuntos («Liberar espacio») pasa a contar también las
+    portadas: sin eso habría borrado la imagen de portada de cualquier página,
+    ya que no aparece en el documento. Cubierto por
+    `cover_attachments_survive_the_collector`.
+  - La pareja `(kind, value)` se valida en el dominio y no con un CHECK: SQLite
+    no permite añadir restricciones con ALTER TABLE y ampliar los tipos de
+    portada obligaría a reescribir la tabla entera.
+- **Reversión:** las columnas pueden quedarse sin uso sin romper nada, pero la
+  versión de esquema no baja.
+
+## ADR-012 — Las plantillas son datos verificados, no código
+
+- **Fecha:** 2026-07-29
+- **Estado:** aceptada
+- **Contexto:** el catálogo de plantillas debe crecer con el tiempo sin que
+  cada añadido toque componentes, comandos ni pruebas.
+- **Opciones:** (a) un componente por plantilla; (b) un catálogo declarativo en
+  `@nodora/shared` compilado a ProseMirror; (c) plantillas en Markdown
+  incrustado que se convierten al vuelo.
+- **Decisión:** (b). `packages/shared/src/templates.ts` declara título, icono,
+  bloques y, si procede, el esquema de la base de datos que crea.
+- **Razón:** añadir una plantilla es añadir un objeto. (a) multiplica el código
+  por plantilla; (c) necesita un conversor Markdown→ProseMirror que sería otra
+  superficie de fallo.
+- **Consecuencias:** el riesgo pasa a ser que una plantilla genere un documento
+  que el backend rechace al guardar. Se cierra con un puente de verificación:
+  la prueba de TypeScript vuelca el catálogo compilado a
+  `packages/shared/templates.fixture.json` y falla si el archivo está
+  desfasado; la prueba de Rust `tests/templates.rs` valida cada documento con
+  el validador real y lo guarda en una página de verdad. Una plantilla
+  inválida rompe la compilación, no la sesión del usuario.
+- **Plantillas con limitación declarada:** «Reunión grabada» (Nodora no graba
+  ni transcribe), «Panel de control» (sin fórmulas ni gráficos), «Calendario»
+  (sin vista de calendario todavía) y «Diario de trading» (sin cotizaciones ni
+  cálculo). Cada una muestra su advertencia al elegirla, y hay una prueba que
+  comprueba que la declaran.
+- **Reversión:** trivial (se borra el archivo y el selector).

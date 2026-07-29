@@ -168,21 +168,36 @@ Notas:
 4. **Crecimiento del alcance.** Las plantillas son un pozo sin fondo: se cierra
    el catálogo inicial y lo demás va al roadmap.
 
-## 5. Decisiones abiertas
+## 5. Decisiones tomadas
 
-Ninguna bloquea el arranque; se anotan las asunciones tomadas por defecto:
-
-- **Alcance del borrado:** se implementan las dos acciones (asunción tomada al
-  no haber respuesta; es la opción segura y no impide adoptar otra después).
-- **Portada:** se incluye, con la migración de la §3.
-- **Catálogo de plantillas:** se parte de un conjunto amplio y se ajusta con
-  la respuesta del propietario.
+- **Alcance del borrado:** las dos acciones separadas (§1.1). Implementado.
+- **Portada:** incluida, con la migración de la §3. Confirmada por el
+  propietario el 2026-07-29. Registrada como ADR-011.
+- **Catálogo de plantillas:** el propietario pidió **todas** las familias
+  propuestas más un bloque «otras». Implementadas 20 plantillas. Registrado
+  como ADR-012.
 
 ## 6. Orden de trabajo
 
-1. Eliminar espacios (backend + salvaguardas + pruebas).
-2. Panel del espacio reorganizado.
-3. Migración de portada y atributos de página.
-4. Página nueva: barra de acciones, selector de emoji, portada.
-5. Catálogo de plantillas y punto de partida.
-6. Pruebas de interfaz y accesibilidad de todo lo anterior; documentación.
+1. Eliminar espacios (backend + salvaguardas + pruebas). **Hecho.**
+2. Panel del espacio reorganizado. **Hecho.**
+3. Migración de portada y atributos de página. **Hecho.**
+4. Página nueva: barra de acciones, selector de emoji, portada. **Hecho.**
+5. Catálogo de plantillas y punto de partida. **Hecho.**
+6. Pruebas de interfaz y accesibilidad; documentación. **Hecho.**
+7. Ejercitarlo a mano sobre la aplicación instalada. **Pendiente** (tarea 7.6).
+
+## 7. Defectos que destaparon estas pruebas
+
+Dos fallos reales que no eran del alcance pedido, encontrados al verificarlo:
+
+1. **El editor no se refrescaba al reemplazar el contenido desde fuera.** Se
+   veía al aplicar una plantilla, pero afectaba igualmente a la recarga tras
+   un conflicto de versión: se recargaban los datos y el editor seguía
+   mostrando el documento anterior. Corregido con un contador que solo cambia
+   cuando el documento se sustituye a propósito, para no perder el cursor
+   durante la edición normal.
+2. **El área de edición llevaba `aria-label` sobre un `div` sin rol**, un
+   atributo ARIA prohibido: los lectores de pantalla no la anunciaban. Salió
+   al pasar axe sobre una página vacía, algo que ninguna prueba hacía hasta
+   ahora. Corregido con `role="textbox"` y `aria-multiline`.

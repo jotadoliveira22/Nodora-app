@@ -44,7 +44,14 @@ fn migrates_database_created_before_migrations_existed() {
             .unwrap();
     }
     let conn = db::open_with_migrations(&db_path, db::WORKSPACE_MIGRATIONS).unwrap();
-    assert_eq!(db::schema_version(&conn).unwrap(), 1);
+    // Se compara con la última migración embebida, no con un número fijo: así
+    // añadir una migración no obliga a retocar esta prueba.
+    let ultima = db::WORKSPACE_MIGRATIONS
+        .iter()
+        .map(|m| m.version)
+        .max()
+        .unwrap();
+    assert_eq!(db::schema_version(&conn).unwrap(), ultima);
     // Los datos preexistentes siguen ahí (la migración es aditiva).
     let dato: String = conn
         .query_row("SELECT dato FROM legado WHERE id='1'", [], |r| r.get(0))
@@ -715,4 +722,131 @@ fn forgetting_a_workspace_leaves_the_data_untouched() {
     assert!(reg.list().unwrap().is_empty(), "sale del registro");
     assert!(dir.join("nodora.db").exists(), "los datos siguen en disco");
     workspace::open_workspace(&dir, DEVICE).unwrap();
+}
+
+// ---- Portada de página (migración 002) -----------------------------------
+
+#[test]
+fn cover_rejects_values_that_would_leave_a_broken_page() {
+    let tmp = TempDir::new().unwrap();
+    let w = ws(tmp.path());
+    let page = pages::create_page(&w.conn, &w.ctx, None, "Con portada", None).unwrap();
+
+    // Color inexistente.
+    assert!(matches!(
+        pages::set_page_cover(&w.conn, &w.ctx, &page.id, Some("color"), Some("dorado")),
+        Err(NodoraError::InvalidInput(_))
+    ));
+    // Tipo desconocido.
+    assert!(matches!(
+        pages::set_page_cover(&w.conn, &w.ctx, &page.id, Some("url"), Some("http://x")),
+        Err(NodoraError::InvalidInput(_))
+    ));
+    // Adjunto que no existe: la portada quedaría rota para siempre.
+    assert!(matches!(
+        pages::set_page_cover(
+            &w.conn,
+            &w.ctx,
+            &page.id,
+            Some("attachment"),
+            Some("no-existe")
+        ),
+        Err(NodoraError::AttachmentNotFound)
+    ));
+    // Nada de lo anterior deja rastro.
+    let detalle = pages::get_page(&w.conn, &page.id).unwrap();
+    assert_eq!(detalle.cover_kind, None);
+    assert_eq!(detalle.cover_value, None);
+
+    // Un preset válido sí se guarda, y quitarla limpia también el valor.
+    pages::set_page_cover(&w.conn, &w.ctx, &page.id, Some("color"), Some("salvia")).unwrap();
+    let detalle = pages::get_page(&w.conn, &page.id).unwrap();
+    assert_eq!(detalle.cover_kind.as_deref(), Some("color"));
+    assert_eq!(detalle.cover_value.as_deref(), Some("salvia"));
+
+    pages::set_page_cover(&w.conn, &w.ctx, &page.id, None, Some("salvia")).unwrap();
+    let detalle = pages::get_page(&w.conn, &page.id).unwrap();
+    assert_eq!(detalle.cover_kind, None);
+    assert_eq!(
+        detalle.cover_value, None,
+        "quitar la portada no puede dejar el valor huérfano"
+    );
+}
+
+#[test]
+fn cover_attachments_survive_the_collector() {
+    // La portada no está en el documento de la página. Si el recolector solo
+    // mirase los documentos, borraría la imagen de portada de todas ellas.
+    let tmp = TempDir::new().unwrap();
+    let w = ws(tmp.path());
+    let att = attachments::import_bytes(&w, PNG_A, "portada.png").unwrap();
+    let page = pages::create_page(&w.conn, &w.ctx, None, "Con portada", None).unwrap();
+    pages::set_page_cover(&w.conn, &w.ctx, &page.id, Some("attachment"), Some(&att.id)).unwrap();
+
+    let informe = attachments::collect_unreferenced(&w, false).unwrap();
+
+    assert_eq!(informe.unreferenced, 0, "la portada está en uso");
+    assert!(attachments::verify(&w, &att.id).unwrap());
+
+    // Y al quitarla, deja de estarlo: la referencia se recalcula de verdad.
+    pages::set_page_cover(&w.conn, &w.ctx, &page.id, None, None).unwrap();
+    let informe = attachments::collect_unreferenced(&w, true).unwrap();
+    assert_eq!(informe.unreferenced, 1);
+}
+
+#[test]
+fn workspace_created_before_covers_migrates_and_keeps_its_pages() {
+    // Una base v1 real: se crea con la migración 001 y se abre con las dos.
+    let tmp = TempDir::new().unwrap();
+    let dir = tmp.path().join("antiguo");
+    std::fs::create_dir_all(&dir).unwrap();
+    let solo_init = &db::WORKSPACE_MIGRATIONS[..1];
+    {
+        let mut conn = rusqlite::Connection::open(dir.join("nodora.db")).unwrap();
+        db::migrate(&mut conn, solo_init).unwrap();
+        let now = "2026-01-01T00:00:00Z";
+        conn.execute(
+            "INSERT INTO users (id, name, kind, created_at, updated_at)
+             VALUES ('u1','Propietario','local_owner',?1,?1)",
+            [now],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO devices (id, name, platform, last_seen_at, created_at, updated_at)
+             VALUES (?1,'Equipo','linux',?2,?2,?2)",
+            rusqlite::params![DEVICE, now],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO workspaces (id, name, created_at, updated_at, created_by, updated_by, device_id)
+             VALUES ('w1','Antiguo',?1,?1,'u1','u1',?2)",
+            rusqlite::params![now, DEVICE],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO pages (id, workspace_id, title, position, created_at, updated_at,
+                                created_by, updated_by, device_id)
+             VALUES ('p1','w1','Escrita antes de las portadas','a0',?1,?1,'u1','u1',?2)",
+            rusqlite::params![now, DEVICE],
+        )
+        .unwrap();
+    }
+
+    let w = workspace::open_workspace(&dir, DEVICE).unwrap();
+
+    let detalle = pages::get_page(&w.conn, "p1").unwrap();
+    assert_eq!(detalle.title, "Escrita antes de las portadas");
+    assert_eq!(
+        detalle.cover_kind, None,
+        "sin portada es el estado correcto"
+    );
+    // Y la página ya admite portada tras migrar.
+    pages::set_page_cover(&w.conn, &w.ctx, "p1", Some("color"), Some("tinta")).unwrap();
+    assert_eq!(
+        pages::get_page(&w.conn, "p1")
+            .unwrap()
+            .cover_value
+            .as_deref(),
+        Some("tinta")
+    );
 }

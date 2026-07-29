@@ -1,6 +1,6 @@
 # PROJECT_STATE.md — Nodora
 
-> Última actualización: 2026-07-29
+> Última actualización: 2026-07-29 (segunda tanda)
 
 ## Estado actual
 
@@ -26,7 +26,7 @@ El instalador Windows se produce en CI (`windows-latest`, NSIS): ADR-000.
 ## Funciones terminadas
 
 **Documentación (Fases 0–2):** 27 documentos en `docs/` + `SECURITY.md` +
-migraciones SQL iniciales. ADR-000 … ADR-009 en `DECISIONS.md`.
+migraciones SQL iniciales. ADR-000 … ADR-012 en `DECISIONS.md`.
 
 **Backend (Rust / Tauri 2):**
 - Migraciones versionadas embebidas con verificación de checksum, rechazo de
@@ -49,7 +49,12 @@ migraciones SQL iniciales. ADR-000 … ADR-009 en `DECISIONS.md`.
 - Recolección segura de adjuntos sin referencias («Liberar espacio»), que
   recalcula las referencias reales desde el contenido y nunca borra archivos
   que no reconoce.
-- 54 comandos IPC tipados; errores con códigos estables sin filtrar detalles
+- Eliminación de espacios: «quitar de la lista» (reversible) y «eliminar del
+  disco» (irreversible, solo sobre carpetas que son un espacio de Nodora
+  reconocible y nunca sobre el espacio abierto), más estadísticas por espacio.
+- Portada de página (migración 002): degradado propio o imagen del espacio,
+  contada como referencia por el recolector de adjuntos.
+- 59 comandos IPC tipados; errores con códigos estables sin filtrar detalles
   internos; logging estructurado sin contenido de usuario.
 
 **Frontend (React + TypeScript estricto):**
@@ -62,12 +67,20 @@ migraciones SQL iniciales. ADR-000 … ADR-009 en `DECISIONS.md`.
 - Vista de tabla de bases de datos con editores por tipo de celda.
 - Paleta de búsqueda (Ctrl+K) con fragmentos resaltados y filtros.
 - Sistema visual propio con tema claro/oscuro y estados de UI.
+- Panel de espacios con contenido y tamaño de cada uno y acciones por fila.
+- Página nueva con acciones de cabecera (icono, portada, plantilla), selector
+  de emoji con buscador y punto de partida que desaparece al escribir.
+- Catálogo de 20 plantillas declarativas (`packages/shared/src/templates.ts`),
+  de contenido y de base de datos, con advertencia en las que prometen algo
+  que el MVP todavía no cubre.
 
 ## Funciones en desarrollo
 
-- Ninguna. El siguiente bloque de trabajo es el Horizonte 1 del roadmap
-  (`docs/FUTURE_ROADMAP.md`): historial de versiones, bloques avanzados,
-  vistas adicionales de bases de datos e importadores.
+- Ninguna. La tanda de mejoras de experiencia (`docs/UX_IMPROVEMENTS_PLAN.md`)
+  está terminada y verificada de forma automatizada; falta ejercitarla a mano
+  sobre la aplicación instalada. El siguiente bloque es el Horizonte 1 del
+  roadmap (`docs/FUTURE_ROADMAP.md`): historial de versiones, bloques
+  avanzados, vistas adicionales de bases de datos e importadores.
 
 ## Bloqueos
 
@@ -94,20 +107,26 @@ registros sin transacción explícita (D7).
    archivar y eliminar, favoritos, filtros y cambio de tipo en bases de
    datos, y «Liberar espacio». Están cubiertas por pruebas automatizadas;
    listadas en `docs/MANUAL_TEST_RESULTS.md`.
+4. **La migración 002 (portadas) no tiene vuelta atrás para el usuario** — una
+   base migrada ya no la abre una versión anterior de Nodora, porque el
+   arranque rechaza esquemas más nuevos por diseño (ADR-011). Conviene crear
+   un respaldo antes de instalar la versión con portadas.
+5. **Las mejoras de experiencia aún no se han usado a mano** — eliminar
+   espacios, portadas y plantillas están verificadas de forma automatizada,
+   pero no sobre la aplicación instalada en Windows (tarea 7.6).
 
 ## Próximo paso exacto
 
-Reinstalar con el artefacto que incluye los dos arreglos de la beta (menús
-con el ratón y gestor de espacios): **`nodora-windows-installer` del run #20**
-(commit `dec5865`, 2,618,728 bytes, sha256 `319b95df…`, disponible hasta el
-2026-10-26). Después, arrancar el Horizonte 1 del roadmap
-(`docs/FUTURE_ROADMAP.md`): historial de versiones, bloques avanzados,
-vistas adicionales de bases de datos e importadores.
+Esperar al artefacto de CI de esta tanda y reinstalar con él: incluye los dos
+arreglos de la beta (menús con el ratón y gestor de espacios) **y** las
+mejoras nuevas (eliminar espacios, portadas y plantillas). **Crear un respaldo
+antes**, porque al abrir el espacio se aplicará la migración 002 y no se puede
+volver a una versión anterior. Después, ejercitar a mano la tarea 7.6 y
+arrancar el Horizonte 1 del roadmap (`docs/FUTURE_ROADMAP.md`).
 
 ## Última prueba ejecutada
 
-`cargo test` (2026-07-27): **53 pruebas, 53 correctas** en Linux y en Windows
-(vía CI)
+`cargo test` (2026-07-29): **62 pruebas, 62 correctas**
 - 13 unitarias (orden fraccionario, validación de documentos)
 - 2 de aceptación (`tests/acceptance.rs`: los criterios 2-13 y 15 recorridos
   como una historia de usuario completa, más la portabilidad del espacio)
@@ -115,22 +134,28 @@ vistas adicionales de bases de datos e importadores.
   permisos de red, CSP sin orígenes remotos, frontend sin llamadas)
 - 19 de integración (`tests/core.rs`: workspace, páginas, guardado, enlaces,
   búsqueda, bases de datos, adjuntos, exportación, respaldos, volumen)
-- 15 de robustez (`tests/robustness.rs`: migración desde base antigua,
-  rollback de migración fallida, inyección SQL, path traversal, zip-slip,
-  documentos inválidos, operaciones repetidas, contrato IPC camelCase,
-  multilingüe extremo a extremo, límites de adjuntos, invariantes del árbol y
-  seguridad del recolector de adjuntos)
+- 22 de robustez (`tests/robustness.rs`: migración desde base antigua y desde
+  una base anterior a las portadas, rollback de migración fallida, inyección
+  SQL, path traversal, zip-slip, documentos inválidos, operaciones repetidas,
+  contrato IPC camelCase, multilingüe extremo a extremo, límites de adjuntos,
+  invariantes del árbol, seguridad del recolector de adjuntos, eliminación de
+  espacios y validación de portadas)
+- 2 de plantillas (`tests/templates.rs`: los 20 documentos del catálogo se
+  validan con el validador real, se guardan en páginas y entran en el índice
+  de búsqueda)
 
-`pnpm --filter @nodora/desktop test:ui` (Playwright): **27 pruebas, 27
-correctas** (19 de interfaz + 8 de accesibilidad WCAG 2.1 AA) — bienvenida,
+`pnpm --filter @nodora/desktop test:ui` (Playwright): **33 pruebas, 33
+correctas** (23 de interfaz + 10 de accesibilidad WCAG 2.1 AA) — bienvenida,
 creación y titulación de páginas, autosave, menú `/` (con teclado **y con el
 ratón**), menciones `@` con el ratón, atajos de Markdown, enlaces `@` con
 backlinks, búsqueda Ctrl+K, archivar/restaurar, bases de datos, navegación,
-subpáginas, gestor de varios espacios de trabajo, tema oscuro, manejo de error
-de guardado y validación de respaldo.
+subpáginas, gestión de espacios (crear, cambiar, quitar de la lista, eliminar
+del disco con confirmación), icono y portada de página, plantillas de
+contenido y de base de datos, tema oscuro, manejo de error de guardado y
+validación de respaldo.
 
-`pnpm -r test`: 12 pruebas correctas (10 de orden fraccionario en TS + 2 de
-renderizado seguro de fragmentos de búsqueda).
+`pnpm -r test`: 17 pruebas correctas (10 de orden fraccionario, 5 del catálogo
+de plantillas y 2 de renderizado seguro de fragmentos de búsqueda).
 `pnpm lint`, `pnpm format:check`, `pnpm -r typecheck`: sin errores.
 
 **Defectos encontrados por las pruebas de interfaz y corregidos:**

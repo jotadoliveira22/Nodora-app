@@ -235,6 +235,21 @@ pub fn collect_unreferenced(ws: &OpenWorkspace, dry_run: bool) -> Result<Cleanup
         }
     }
 
+    // Las portadas de página también son referencias, y no viven en el
+    // documento: sin contarlas aquí, el recolector borraría la imagen de
+    // portada de cualquier página por considerarla no usada.
+    {
+        let mut stmt = ws.conn.prepare(
+            "SELECT cover_value FROM pages
+             WHERE cover_kind = 'attachment' AND cover_value IS NOT NULL
+               AND deleted_at IS NULL",
+        )?;
+        let covers = stmt.query_map([], |r| r.get::<_, String>(0))?;
+        for cover in covers {
+            *referenced.entry(cover?).or_insert(0) += 1;
+        }
+    }
+
     // Filas de adjuntos registradas.
     let rows: Vec<(String, String, i64)> = {
         let mut stmt = ws

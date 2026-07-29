@@ -76,6 +76,8 @@ pub fn run() {
             commands::list_archived_pages,
             commands::rename_page,
             commands::set_page_icon,
+            commands::set_page_cover,
+            commands::list_cover_presets,
             commands::save_page_content,
             commands::move_page,
             commands::duplicate_page,

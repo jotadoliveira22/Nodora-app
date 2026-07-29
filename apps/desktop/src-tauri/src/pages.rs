@@ -42,6 +42,9 @@ pub struct PageDetail {
     pub database_id: Option<String>,
     pub archived_at: Option<String>,
     pub content_json: String,
+    /// Portada: `None`, `Some("color")` o `Some("attachment")` (migración 002).
+    pub cover_kind: Option<String>,
+    pub cover_value: Option<String>,
     pub version: i64,
     pub updated_at: String,
 }
@@ -174,7 +177,7 @@ pub fn create_page_with_content(
 pub fn get_page(conn: &Connection, id: &str) -> Result<PageDetail> {
     conn.query_row(
         "SELECT id, parent_page_id, title, icon, kind, database_id, archived_at,
-                content_json, version, updated_at
+                content_json, cover_kind, cover_value, version, updated_at
          FROM pages WHERE id = ?1 AND deleted_at IS NULL",
         [id],
         |r| {
@@ -187,8 +190,10 @@ pub fn get_page(conn: &Connection, id: &str) -> Result<PageDetail> {
                 database_id: r.get(5)?,
                 archived_at: r.get(6)?,
                 content_json: r.get(7)?,
-                version: r.get(8)?,
-                updated_at: r.get(9)?,
+                cover_kind: r.get(8)?,
+                cover_value: r.get(9)?,
+                version: r.get(10)?,
+                updated_at: r.get(11)?,
             })
         },
     )
@@ -268,6 +273,73 @@ pub fn rename_page(
         params![title, now, ctx.user_id, ctx.device_id, id],
     )?;
     fts_insert(conn, id)?;
+    let version: i64 = conn.query_row("SELECT version FROM pages WHERE id = ?1", [id], |r| {
+        r.get(0)
+    })?;
+    Ok(SaveResult {
+        version,
+        updated_at: now,
+    })
+}
+
+/// Portadas de color disponibles. Son degradados propios de Nodora resueltos
+/// en CSS: no hay imágenes empaquetadas ni descargas, así que la portada por
+/// defecto funciona sin internet y no engorda el instalador.
+pub const COVER_PRESETS: &[&str] = &[
+    "arena", "salvia", "niebla", "tinta", "cobre", "musgo", "ciruela", "brasa",
+];
+
+/// Cambia la portada de una página. `kind` en `None` la quita.
+///
+/// La pareja (kind, value) se valida aquí y no con un CHECK en SQL: SQLite no
+/// permite añadir restricciones con ALTER TABLE, y ampliar los tipos de
+/// portada en el futuro obligaría a reescribir la tabla entera.
+pub fn set_page_cover(
+    conn: &Connection,
+    ctx: &WorkspaceCtx,
+    id: &str,
+    kind: Option<&str>,
+    value: Option<&str>,
+) -> Result<SaveResult> {
+    match (kind, value) {
+        (None, _) => {}
+        (Some("color"), Some(v)) if COVER_PRESETS.contains(&v) => {}
+        (Some("color"), _) => {
+            return Err(NodoraError::InvalidInput(
+                "color de portada desconocido".into(),
+            ))
+        }
+        (Some("attachment"), Some(v)) => {
+            // La portada apunta a un adjunto del propio espacio: si no existe,
+            // la página quedaría con una portada rota que nadie puede arreglar.
+            let existe: i64 = conn.query_row(
+                "SELECT COUNT(*) FROM attachments WHERE id = ?1 AND deleted_at IS NULL",
+                [v],
+                |r| r.get(0),
+            )?;
+            if existe == 0 {
+                return Err(NodoraError::AttachmentNotFound);
+            }
+        }
+        (Some("attachment"), None) => {
+            return Err(NodoraError::InvalidInput("falta el adjunto".into()))
+        }
+        (Some(_), _) => {
+            return Err(NodoraError::InvalidInput(
+                "tipo de portada no válido".into(),
+            ))
+        }
+    }
+    ensure_alive(conn, id)?;
+    let now = now_iso();
+    // Quitar la portada limpia también el valor: dejar uno huérfano haría que
+    // el recolector de adjuntos creyera que la imagen sigue en uso.
+    let value = if kind.is_none() { None } else { value };
+    conn.execute(
+        "UPDATE pages SET cover_kind = ?1, cover_value = ?2, updated_at = ?3, updated_by = ?4,
+         device_id = ?5, version = version + 1 WHERE id = ?6",
+        params![kind, value, now, ctx.user_id, ctx.device_id, id],
+    )?;
     let version: i64 = conn.query_row("SELECT version FROM pages WHERE id = ?1", [id], |r| {
         r.get(0)
     })?;
