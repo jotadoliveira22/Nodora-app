@@ -12,6 +12,7 @@ import type {
   PageSummary,
   SearchResultItem,
   WorkspaceInfo,
+  WorkspaceStats,
 } from '@nodora/shared';
 
 export interface ApiError {
@@ -42,6 +43,9 @@ export const workspaceApi = {
   current: () => call<WorkspaceInfo | null>('current_workspace'),
   close: () => call<void>('close_workspace'),
   forget: (path: string) => call<void>('forget_workspace', { path }),
+  stats: (path: string) => call<WorkspaceStats>('get_workspace_stats', { path }),
+  /** Irreversible: borra la carpeta del espacio. Requiere confirmación previa. */
+  delete: (path: string) => call<void>('delete_workspace', { path }),
   rename: (name: string) => call<void>('rename_workspace', { name }),
   setIcon: (icon: string | null) => call<void>('set_workspace_icon', { icon }),
   getSetting: (key: string) => call<string | null>('get_app_setting', { key }),
@@ -181,6 +185,9 @@ export const exportApi = {
     call<string[]>('export_page_markdown', { pageId, destDir, includeSubpages }),
   workspaceJson: (destFile: string) => call<void>('export_workspace_json', { destFile }),
   createBackup: (destDir: string | null) => call<string>('create_backup', { destDir }),
+  /** Respalda otro espacio conocido sin dejar de trabajar en el actual. */
+  backupWorkspaceAt: (path: string, destDir: string) =>
+    call<string>('backup_workspace_at', { path, destDir }),
   validateBackup: (zipPath: string) => call<BackupSummary>('validate_backup', { zipPath }),
   restoreBackup: (zipPath: string, destParent: string | null) =>
     call<string>('restore_backup', { zipPath, destParent }),

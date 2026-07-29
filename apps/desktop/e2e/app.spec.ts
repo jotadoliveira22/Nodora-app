@@ -413,6 +413,76 @@ test('se pueden crear y cambiar espacios sin salir de la aplicación', async ({ 
   await page.locator('.nd-ws-header').click();
   await page.getByRole('menuitem', { name: /Espacios de trabajo/ }).click();
   const dialog2 = page.getByRole('dialog', { name: 'Espacios de trabajo' });
-  await dialog2.getByRole('button', { name: /Consultora A/ }).click();
+  await dialog2.getByRole('button', { name: 'Abrir Consultora A' }).click();
   await expect(page.locator('.nd-ws-name')).toHaveText('Consultora A');
+});
+
+test('un espacio se puede quitar de la lista sin tocar sus datos', async ({ page }) => {
+  await createWorkspace(page, 'Consultora A');
+  await page.locator('.nd-ws-header').click();
+  await page.getByRole('menuitem', { name: /Espacios de trabajo/ }).click();
+  const dialog = page.getByRole('dialog', { name: 'Espacios de trabajo' });
+  await dialog.getByRole('button', { name: /Espacio nuevo/ }).click();
+  await dialog.getByLabel('Nombre del espacio nuevo').fill('Consultora B');
+  await dialog.getByRole('button', { name: /Crear y abrir/ }).click();
+  await expect(page.locator('.nd-ws-name')).toHaveText('Consultora B');
+
+  await page.locator('.nd-ws-header').click();
+  await page.getByRole('menuitem', { name: /Espacios de trabajo/ }).click();
+  const panel = page.getByRole('dialog', { name: 'Espacios de trabajo' });
+  await expect(panel).toContainText('Consultora A');
+
+  await panel.getByRole('button', { name: 'Acciones de Consultora A' }).click();
+  await page.getByRole('menuitem', { name: 'Quitar de la lista' }).click();
+
+  await expect(panel.getByRole('button', { name: 'Abrir Consultora A' })).toBeHidden();
+  await expect(page.locator('.nd-toast').first()).toContainText('siguen en el disco');
+});
+
+test('eliminar un espacio del disco exige escribir su nombre', async ({ page }) => {
+  await createWorkspace(page, 'Cliente viejo');
+  await page.locator('.nd-ws-header').click();
+  await page.getByRole('menuitem', { name: /Espacios de trabajo/ }).click();
+  const dialog = page.getByRole('dialog', { name: 'Espacios de trabajo' });
+  await dialog.getByRole('button', { name: /Espacio nuevo/ }).click();
+  await dialog.getByLabel('Nombre del espacio nuevo').fill('Cliente activo');
+  await dialog.getByRole('button', { name: /Crear y abrir/ }).click();
+  await expect(page.locator('.nd-ws-name')).toHaveText('Cliente activo');
+
+  await page.locator('.nd-ws-header').click();
+  await page.getByRole('menuitem', { name: /Espacios de trabajo/ }).click();
+  const panel = page.getByRole('dialog', { name: 'Espacios de trabajo' });
+  await panel.getByRole('button', { name: 'Acciones de Cliente viejo' }).click();
+  await page.getByRole('menuitem', { name: /Eliminar del disco/ }).click();
+
+  const confirmar = page.getByRole('dialog', { name: 'Eliminar espacio del disco' });
+  await expect(confirmar).toBeVisible();
+  const boton = confirmar.getByRole('button', { name: /Eliminar definitivamente/ });
+
+  // Sin el nombre exacto, el botón destructivo permanece bloqueado.
+  await expect(boton).toBeDisabled();
+  await confirmar.getByLabel(/Escribe/).fill('Cliente');
+  await expect(boton).toBeDisabled();
+
+  await confirmar.getByLabel(/Escribe/).fill('Cliente viejo');
+  await expect(boton).toBeEnabled();
+  await boton.click();
+
+  await expect(confirmar).toBeHidden();
+  await expect(page.locator('.nd-toast').first()).toContainText('eliminado del disco');
+  await expect(panel.getByRole('button', { name: 'Abrir Cliente viejo' })).toBeHidden();
+});
+
+test('el espacio abierto no se puede eliminar del disco', async ({ page }) => {
+  await createWorkspace(page, 'Único');
+  await page.locator('.nd-ws-header').click();
+  await page.getByRole('menuitem', { name: /Espacios de trabajo/ }).click();
+  const panel = page.getByRole('dialog', { name: 'Espacios de trabajo' });
+
+  await panel.getByRole('button', { name: 'Acciones de Único' }).click();
+  await page.getByRole('menuitem', { name: /Eliminar del disco/ }).click();
+
+  const confirmar = page.getByRole('dialog', { name: 'Eliminar espacio del disco' });
+  await expect(confirmar).toContainText('es el espacio abierto ahora mismo');
+  await expect(confirmar.getByRole('button', { name: /Eliminar definitivamente/ })).toBeDisabled();
 });

@@ -154,6 +154,46 @@ pub fn forget_workspace(state: State<'_, AppState>, path: String) -> Result<()> 
 }
 
 #[tauri::command]
+pub fn get_workspace_stats(path: String) -> Result<workspace::WorkspaceStats> {
+    let dir = export::ensure_safe_dir(&path)?;
+    workspace::workspace_stats(&dir)
+}
+
+/// Elimina del disco un espacio que no esté abierto y lo saca del registro.
+/// Irreversible: la interfaz debe confirmarlo explícitamente antes de llamar.
+#[tauri::command]
+pub fn delete_workspace(state: State<'_, AppState>, path: String) -> Result<()> {
+    let dir = export::ensure_safe_dir(&path)?;
+    // El espacio abierto no se elimina: su base está en uso (WAL activo) y la
+    // interfaz seguiría apuntando a datos inexistentes. Primero hay que
+    // cambiar de espacio o cerrarlo.
+    let open = state
+        .workspace
+        .lock()
+        .map_err(|_| NodoraError::Internal("lock".into()))?
+        .as_ref()
+        .map(|ws| ws.path.clone());
+    if let Some(open) = open {
+        if same_path(&open, &dir) {
+            return Err(NodoraError::InvalidInput(
+                "no se puede eliminar el espacio abierto: cambia a otro primero".into(),
+            ));
+        }
+    }
+    workspace::delete_workspace_folder(&dir)?;
+    state.with_registry(|r| r.forget(&dir))
+}
+
+/// Compara rutas resolviendo enlaces y formas equivalentes cuando existen;
+/// si alguna no se puede canonicalizar, se comparan tal cual.
+fn same_path(a: &std::path::Path, b: &std::path::Path) -> bool {
+    match (a.canonicalize(), b.canonicalize()) {
+        (Ok(a), Ok(b)) => a == b,
+        _ => a == b,
+    }
+}
+
+#[tauri::command]
 pub fn rename_workspace(state: State<'_, AppState>, name: String) -> Result<()> {
     let info = state.with_ws(|ws| {
         workspace::rename_workspace(ws, &name)?;
@@ -553,6 +593,25 @@ pub fn create_backup(state: State<'_, AppState>, dest_dir: Option<String>) -> Re
             .to_string_lossy()
             .into_owned())
     })
+}
+
+/// Respalda un espacio **que no es el abierto**, sin cambiar de espacio.
+/// Lo necesita el diálogo de eliminación: querer una copia antes de borrar no
+/// puede obligar a abandonar el espacio en el que se está trabajando.
+#[tauri::command]
+pub fn backup_workspace_at(
+    state: State<'_, AppState>,
+    path: String,
+    dest_dir: String,
+) -> Result<String> {
+    let dir = export::ensure_safe_dir(&path)?;
+    let dest = export::ensure_safe_dir(&dest_dir)?;
+    workspace::assert_workspace_folder(&dir)?;
+    let device_id = state.with_registry(|r| Ok(r.device_id.clone()))?;
+    let ws = workspace::open_workspace(&dir, &device_id)?;
+    Ok(backup::create_backup(&ws, &dest)?
+        .to_string_lossy()
+        .into_owned())
 }
 
 #[tauri::command]

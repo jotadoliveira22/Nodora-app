@@ -872,3 +872,31 @@ textarea {
 .nd-ws-list-item:hover {
   background: var(--nd-accent-soft);
 }
+
+/* Fila del panel de espacios: el espacio en sí, más sus acciones. */
+.nd-ws-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nd-ws-row .nd-ws-list-item[aria-current='true'] {
+  border-color: var(--nd-accent);
+}
+
+.nd-ws-row .nd-ws-list-item:disabled {
+  cursor: default;
+}
+
+.nd-ws-row .nd-ws-list-item:disabled:hover {
+  background: transparent;
+}
+
+/* Aviso de una acción sin vuelta atrás. */
+.nd-danger-note {
+  border-left: 3px solid var(--nd-danger);
+  background: var(--nd-danger-soft);
+  padding: 8px 10px;
+  border-radius: var(--nd-radius-sm);
+  font-size: 13px;
+}

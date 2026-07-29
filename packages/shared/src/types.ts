@@ -21,6 +21,13 @@ export interface KnownWorkspace {
   lastOpenedAt: string | null;
 }
 
+/** Qué contiene un espacio y cuánto ocupa; se muestra antes de eliminarlo. */
+export interface WorkspaceStats {
+  pageCount: number;
+  attachmentCount: number;
+  bytesOnDisk: number;
+}
+
 export interface PageSummary {
   id: string;
   parentPageId: string | null;

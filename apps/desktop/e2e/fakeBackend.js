@@ -117,7 +117,31 @@
     open_last_workspace: () => state.workspace,
     current_workspace: () => state.workspace,
     close_workspace: () => null,
-    forget_workspace: () => null,
+    forget_workspace: ({ path }) => {
+      state.known = state.known.filter((w) => w.path !== path);
+      return null;
+    },
+    get_workspace_stats: ({ path }) => {
+      const k = state.known.find((w) => w.path === path);
+      if (!k) err('WORKSPACE_NOT_FOUND', 'El espacio de trabajo no existe o no está abierto');
+      // Solo el espacio abierto tiene páginas en este backend simulado.
+      const propio = state.workspace && state.workspace.path === path;
+      return {
+        pageCount: propio ? [...state.pages.values()].filter((p) => !p.archivedAt).length : 1,
+        attachmentCount: 0,
+        bytesOnDisk: 4096,
+      };
+    },
+    delete_workspace: ({ path }) => {
+      if (state.workspace && state.workspace.path === path) {
+        err('INVALID_INPUT', 'no se puede eliminar el espacio abierto: cambia a otro primero');
+      }
+      const k = state.known.find((w) => w.path === path);
+      if (!k) err('WORKSPACE_NOT_FOUND', 'El espacio de trabajo no existe o no está abierto');
+      state.known = state.known.filter((w) => w.path !== path);
+      return null;
+    },
+    backup_workspace_at: ({ path, destDir }) => `${destDir}/nodora-backup-${path.slice(6)}.zip`,
     rename_workspace: ({ name }) => {
       state.workspace.name = name;
       return null;

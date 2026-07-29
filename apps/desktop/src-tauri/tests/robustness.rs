@@ -610,3 +610,109 @@ fn cleanup_keeps_attachments_when_a_document_is_corrupt() {
     assert!(!informe.applied);
     assert!(attachments::verify(&w, &att.id).unwrap());
 }
+
+// ---- Eliminación de espacios de trabajo ----------------------------------
+
+#[test]
+fn deleting_a_workspace_removes_its_folder_and_only_its_folder() {
+    let tmp = TempDir::new().unwrap();
+    let w = ws(tmp.path());
+    let dir = w.path.clone();
+    // Un archivo del usuario fuera del espacio, como vecino de carpeta.
+    let vecino = tmp.path().join("documento-del-usuario.txt");
+    std::fs::write(&vecino, b"no es de Nodora").unwrap();
+    drop(w);
+
+    workspace::delete_workspace_folder(&dir).unwrap();
+
+    assert!(!dir.exists(), "la carpeta del espacio se elimina");
+    assert!(vecino.exists(), "nada fuera del espacio se toca");
+}
+
+#[test]
+fn deleting_refuses_folders_that_are_not_nodora_workspaces() {
+    let tmp = TempDir::new().unwrap();
+
+    // Caso 1: carpeta con documentos del usuario, sin nodora.db.
+    let ajena = tmp.path().join("mis-fotos");
+    std::fs::create_dir_all(&ajena).unwrap();
+    std::fs::write(ajena.join("foto.png"), b"datos").unwrap();
+    assert!(matches!(
+        workspace::delete_workspace_folder(&ajena),
+        Err(NodoraError::WorkspaceNotFound)
+    ));
+    assert!(ajena.join("foto.png").exists(), "no se borra nada");
+
+    // Caso 2: un archivo que se llama nodora.db pero no lo es.
+    let falsa = tmp.path().join("falsa");
+    std::fs::create_dir_all(&falsa).unwrap();
+    std::fs::write(falsa.join("nodora.db"), b"esto no es una base SQLite").unwrap();
+    std::fs::write(falsa.join("importante.txt"), b"datos").unwrap();
+    assert!(matches!(
+        workspace::delete_workspace_folder(&falsa),
+        Err(NodoraError::WorkspaceNotFound)
+    ));
+    assert!(falsa.join("importante.txt").exists());
+
+    // Caso 3: una base SQLite válida que no es de Nodora.
+    let otra = tmp.path().join("otra-app");
+    std::fs::create_dir_all(&otra).unwrap();
+    let conn = rusqlite::Connection::open(otra.join("nodora.db")).unwrap();
+    conn.execute("CREATE TABLE cosas (id INTEGER)", []).unwrap();
+    drop(conn);
+    assert!(matches!(
+        workspace::delete_workspace_folder(&otra),
+        Err(NodoraError::WorkspaceNotFound)
+    ));
+    assert!(otra.exists());
+
+    // Caso 4: una ruta que no existe.
+    assert!(matches!(
+        workspace::delete_workspace_folder(&tmp.path().join("no-existe")),
+        Err(NodoraError::WorkspaceNotFound)
+    ));
+}
+
+#[test]
+fn workspace_stats_report_what_would_be_lost() {
+    let tmp = TempDir::new().unwrap();
+    let w = ws(tmp.path());
+    pages::create_page(&w.conn, &w.ctx, None, "Contrato", None).unwrap();
+    attachments::import_bytes(&w, PNG_A, "imagen.png").unwrap();
+    let dir = w.path.clone();
+    drop(w);
+
+    let stats = workspace::workspace_stats(&dir).unwrap();
+    // La página de bienvenida más la creada aquí.
+    assert_eq!(stats.page_count, 2);
+    assert_eq!(stats.attachment_count, 1);
+    assert!(
+        stats.bytes_on_disk > 0,
+        "el tamaño en disco debe ser real, no cero"
+    );
+
+    // Sobre una carpeta que no es un espacio, informar tampoco está permitido.
+    assert!(matches!(
+        workspace::workspace_stats(&tmp.path().join("no-existe")),
+        Err(NodoraError::WorkspaceNotFound)
+    ));
+}
+
+#[test]
+fn forgetting_a_workspace_leaves_the_data_untouched() {
+    // «Quitar de la lista» es la acción reversible: la carpeta sigue ahí y el
+    // espacio se puede volver a abrir con «Abrir carpeta…».
+    let tmp = TempDir::new().unwrap();
+    let w = ws(tmp.path());
+    let dir = w.path.clone();
+    drop(w);
+    let reg = Registry::open(&tmp.path().join("app")).unwrap();
+    reg.remember("ws-1", "Robustez", &dir).unwrap();
+    assert_eq!(reg.list().unwrap().len(), 1);
+
+    reg.forget(&dir).unwrap();
+
+    assert!(reg.list().unwrap().is_empty(), "sale del registro");
+    assert!(dir.join("nodora.db").exists(), "los datos siguen en disco");
+    workspace::open_workspace(&dir, DEVICE).unwrap();
+}

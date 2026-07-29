@@ -3,7 +3,7 @@
 
 use std::path::{Path, PathBuf};
 
-use rusqlite::{params, Connection};
+use rusqlite::{params, Connection, OpenFlags};
 use serde::Serialize;
 
 use crate::db;
@@ -35,6 +35,16 @@ pub struct WorkspaceInfo {
     pub name: String,
     pub icon: Option<String>,
     pub path: String,
+}
+
+/// Qué contiene un espacio y cuánto ocupa. Se muestra en el panel de espacios
+/// y, sobre todo, antes de eliminarlo: quien borra debe saber qué pierde.
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WorkspaceStats {
+    pub page_count: i64,
+    pub attachment_count: i64,
+    pub bytes_on_disk: u64,
 }
 
 impl OpenWorkspace {
@@ -182,6 +192,81 @@ pub fn open_workspace(dir: &Path, device_id: &str) -> Result<OpenWorkspace> {
             device_id: device_id.to_string(),
         },
     })
+}
+
+/// Comprueba que `dir` contiene de verdad un espacio de Nodora.
+///
+/// Es la salvaguarda que separa «eliminar un espacio» de «eliminar una carpeta
+/// cualquiera»: sin ella, una ruta obsoleta o manipulada en el registro
+/// bastaría para destruir datos que no son de Nodora. Se abre la base en modo
+/// solo lectura a propósito, para no migrarla ni modificarla al comprobarla.
+pub fn assert_workspace_folder(dir: &Path) -> Result<()> {
+    let db_path = dir.join(DB_FILE);
+    if !dir.is_dir() || !db_path.is_file() {
+        return Err(NodoraError::WorkspaceNotFound);
+    }
+    let conn = Connection::open_with_flags(&db_path, OpenFlags::SQLITE_OPEN_READ_ONLY)
+        .map_err(|_| NodoraError::WorkspaceNotFound)?;
+    // Un archivo llamado nodora.db no basta: debe tener el esquema y contener
+    // un workspace. Cualquier fallo aquí se traduce a «no es un espacio».
+    let workspaces: i64 = conn
+        .query_row("SELECT COUNT(*) FROM workspaces", [], |r| r.get(0))
+        .map_err(|_| NodoraError::WorkspaceNotFound)?;
+    conn.query_row("SELECT COUNT(*) FROM pages", [], |r| r.get::<_, i64>(0))
+        .map_err(|_| NodoraError::WorkspaceNotFound)?;
+    if workspaces == 0 {
+        return Err(NodoraError::WorkspaceNotFound);
+    }
+    Ok(())
+}
+
+/// Recuento y tamaño de un espacio, leídos sin abrirlo ni migrarlo.
+pub fn workspace_stats(dir: &Path) -> Result<WorkspaceStats> {
+    assert_workspace_folder(dir)?;
+    let conn = Connection::open_with_flags(dir.join(DB_FILE), OpenFlags::SQLITE_OPEN_READ_ONLY)
+        .map_err(|_| NodoraError::WorkspaceNotFound)?;
+    let page_count: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM pages WHERE deleted_at IS NULL AND archived_at IS NULL",
+        [],
+        |r| r.get(0),
+    )?;
+    let attachment_count: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM attachments WHERE deleted_at IS NULL",
+        [],
+        |r| r.get(0),
+    )?;
+    Ok(WorkspaceStats {
+        page_count,
+        attachment_count,
+        bytes_on_disk: dir_size(dir),
+    })
+}
+
+/// Tamaño en disco de una carpeta. Los errores de lectura de una entrada
+/// concreta se ignoran: es un dato informativo, nunca una condición de fallo.
+fn dir_size(dir: &Path) -> u64 {
+    let Ok(entries) = std::fs::read_dir(dir) else {
+        return 0;
+    };
+    entries
+        .flatten()
+        .map(|e| match e.file_type() {
+            Ok(t) if t.is_dir() => dir_size(&e.path()),
+            Ok(t) if t.is_file() => e.metadata().map(|m| m.len()).unwrap_or(0),
+            // Los enlaces simbólicos no se siguen: ni para medir ni para borrar.
+            _ => 0,
+        })
+        .sum()
+}
+
+/// Elimina del disco la carpeta completa de un espacio. Irreversible.
+///
+/// Solo actúa sobre carpetas que superan `assert_workspace_folder`, así que
+/// una ruta equivocada falla antes de tocar nada.
+pub fn delete_workspace_folder(dir: &Path) -> Result<()> {
+    assert_workspace_folder(dir)?;
+    std::fs::remove_dir_all(dir)?;
+    Ok(())
 }
 
 pub fn rename_workspace(ws: &OpenWorkspace, name: &str) -> Result<()> {
